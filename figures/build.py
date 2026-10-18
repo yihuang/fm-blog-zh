@@ -153,28 +153,25 @@ def title(s, t, sub=None):
 
 
 # ---------------------------------------------------------------- lock state box
-def lock_box(s, cx, cy, name, lock, t2, stroke=RED, title_fill=RED,
+def lock_box(s, cx, cy, name, lock, pc1, pc2, stroke=RED, title_fill=RED,
              fill=PANEL, rank=None):
-    w, h = 176, 108
+    w, h = 190, 116
     x, y = cx - w / 2, cy - h / 2
     s.rect(x, y, w, h, rx=14, fill=fill, stroke=stroke, sw=2.2)
-    s.text(x + 14, y + 26, name, size=18, fill=title_fill, weight="700")
-    s.text(x + 14, y + 48, "lock", size=12, fill=MUTED)
-    for lab, dx in (("T1", 62), ("T2", 112)):
-        ox, oy = x + dx, y + 44
+    s.text(x + 14, y + 28, name, size=20, fill=title_fill, weight="700")
+    s.text(x + 14, y + 52, "lock", size=13, fill=MUTED)
+    for lab, dx in (("T1", 68), ("T2", 125)):
+        ox, oy = x + dx, y + 48
         owned = (lock == lab)
         s.circle(ox, oy, 5.5, fill=INK if owned else PAPER,
                  stroke=INK if owned else LINE, sw=1.4)
-        s.text(ox, y + 60, lab, size=11, fill=MUTED, anchor="middle")
-    s.text(x + 14, y + 84, "T2", size=12, fill=MUTED)
-    spin = (t2 == "spin")
-    s.circle(x + 62, y + 80, 5.5, fill=AMBER if spin else PAPER,
-             stroke=AMBER if spin else LINE, sw=1.4)
-    s.text(x + 78, y + 84, "spin" if spin else "inside", size=13, fill=INK)
+        s.text(ox, y + 64, lab, size=12, fill=MUTED, anchor="middle")
+    s.text(x + 14, y + 92, f"T1 {pc1}", size=13.5, fill=INK)
+    s.text(x + 102, y + 92, f"T2 {pc2}", size=13.5, fill=INK)
     if rank is not None:
         bx, by = x + w - 14, y + 14
         s.circle(bx, by, 10.5, fill=PAPER, stroke=stroke, sw=1.3)
-        s.text(bx, by + 4, rank, size=11.5, fill=title_fill,
+        s.text(bx, by + 4, rank, size=12, fill=title_fill,
                anchor="middle", weight="600")
 
 
@@ -237,71 +234,74 @@ def fig1():
 
 # ---------------------------------------------------------------- figure 2
 def fig_open():
-    h = 440
+    h = 700
     s = SVG(W, h)
     kicker(s, "MUTEX / STATE GRAPH")
     title(s, "锁的状态图", "T1 和 T2 抢一把 test-and-set 自旋锁")
 
-    S, R, G = (170, 250), (420, 250), (700, 250)
-    s.rect(70, 175, 460, 155, rx=24, fill=RED, stroke="none", opacity=0.045)
-    s.rect(70, 175, 460, 155, rx=24, fill="none", stroke=RED, sw=1.2,
-           dash="5 6", opacity=0.4)
-    s.text(300, 160, "T2 永远等下去", size=14, fill=RED, anchor="middle", weight="600")
+    C1, F, C2 = (450, 190), (450, 360), (450, 530)
+    s.arrow((432, 306), (432, 244), color=INK, sw=2.2)
+    s.arrow((468, 244), (468, 306), color=INK, sw=2.2)
+    s.arrow((432, 414), (432, 476), color=GREEN, sw=2.2, dash="6 6")
+    s.arrow((468, 476), (468, 414), color=MUTED, sw=2.0, dash="6 6")
+    s.arrow((538, 170), (538, 210), curve=-35, color=MUTED, sw=2)
+    s.arrow((538, 510), (538, 550), curve=-35, color=MUTED, sw=2)
 
-    s.arrow((S[0] + 88, S[1]), (R[0] - 88, R[1]), color=INK, sw=2.2)
-    s.arrow((R[0] - 55, R[1] - 54), (S[0] + 55, S[1] - 54),
-            curve=35, color=INK, sw=2.2)
-    s.arrow((R[0] + 88, R[1]), (G[0] - 88, G[1]), color=GREEN, sw=2.2, dash="6 6")
-    s.text(295, 220, "T1 抢到", size=13.5, fill=INK, anchor="middle", weight="600")
-    s.text(295, 270, "T1 释放", size=13.5, fill=MUTED, anchor="middle")
-    s.text(560, 270, "T2 抢到", size=13.5, fill=GREEN, anchor="middle", weight="600")
+    s.text(420, 275, "T1 acquire", size=14, fill=INK, anchor="end", weight="600")
+    s.text(480, 275, "T1 release", size=13.5, fill=MUTED, anchor="start")
+    s.text(420, 445, "T2 acquire", size=14, fill=GREEN, anchor="end", weight="600")
+    s.text(480, 445, "T2 release", size=13.5, fill=MUTED, anchor="start")
+    s.text(580, 195, "T2 spin", size=13, fill=MUTED)
+    s.text(580, 535, "T1 spin", size=13, fill=MUTED)
 
-    lock_box(s, *S, "S", "T1", "spin")
-    lock_box(s, *R, "R", "free", "spin")
-    lock_box(s, *G, "G", "T2", "inside", stroke=GREEN, title_fill=GREEN,
+    lock_box(s, *C1, "C1", "T1", "cs", "try")
+    lock_box(s, *F, "F", "free", "try", "try")
+    lock_box(s, *C2, "C2", "T2", "try", "cs", stroke=GREEN, title_fill=GREEN,
              fill="#E8F0EC")
 
-    s.text(70, 390, "● = 真（持有 / 等待）    ○ = 假（空闲 / 运行）",
-           size=12.5, fill=MUTED)
+    s.text(60, 660, "lock：● = 持有，○ = 空闲；T1/T2：try = 自旋，cs = 临界区",
+           size=12, fill=MUTED)
     s.save("lock-state-graph")
 
 
 def fig2():
-    h = 560
+    h = 700
     s = SVG(W, h)
     kicker(s, "图 3 / LASSO")
     title(s, "反例的形状：一个环",
-          "回到开头的锁状态图：S 和 R 转来转去，G 永远到不了")
+          "回到开头的锁状态图：F 和 C1 转来转去，C2 永远到不了")
 
-    S, R, G = (180, 290), (450, 290), (740, 290)
-    s.rect(80, 195, 460, 175, rx=26, fill=RED, stroke="none", opacity=0.05)
-    s.rect(80, 195, 460, 175, rx=26, fill="none", stroke=RED, sw=1.2,
+    C1, F, C2 = (450, 190), (450, 360), (450, 530)
+    s.rect(300, 125, 310, 335, rx=24, fill=RED, stroke="none", opacity=0.05)
+    s.rect(300, 125, 310, 335, rx=24, fill="none", stroke=RED, sw=1.2,
            dash="5 6", opacity=0.45)
-    s.text(310, 173, "坏环", size=15, fill=RED, anchor="middle", weight="700")
+    s.text(620, 145, "坏环", size=15, fill=RED, anchor="start", weight="700")
 
-    s.arrow((S[0] + 88, S[1]), (R[0] - 88, R[1]), color=RED, sw=2.3)
-    s.arrow((R[0] - 55, R[1] - 54), (S[0] + 55, S[1] - 54),
-            curve=35, color=RED, sw=2.3)
-    s.arrow((R[0] + 88, R[1]), (G[0] - 88, G[1]), color=GREEN, sw=2.3, dash="6 6")
+    s.arrow((432, 306), (432, 244), color=RED, sw=2.3)
+    s.arrow((468, 244), (468, 306), color=RED, sw=2.3)
+    s.arrow((432, 414), (432, 476), color=GREEN, sw=2.3, dash="6 6")
+    s.arrow((468, 476), (468, 414), color=MUTED, sw=2.0, dash="6 6")
+    s.arrow((538, 170), (538, 210), curve=-35, color=RED, sw=2.2)
+    s.arrow((538, 510), (538, 550), curve=-35, color=MUTED, sw=1.6)
 
-    s.text(315, 214, "T1 又抢到", size=12.5, fill=RED, anchor="middle", weight="600")
-    s.text(315, 310, "T1 释放", size=13, fill=MUTED, anchor="middle")
-    s.text(595, 265, "T2 抢到（没走）", size=12.5, fill=GREEN,
-           anchor="middle", weight="600")
+    s.text(420, 275, "T1 acquire", size=12.5, fill=RED, anchor="end", weight="600")
+    s.text(480, 275, "T1 release", size=12.5, fill=RED, anchor="start", weight="600")
+    s.text(420, 445, "T2 acquire（没走）", size=14, fill=GREEN, anchor="end", weight="600")
+    s.text(480, 445, "T2 release", size=12, fill=MUTED, anchor="start")
+    s.text(580, 195, "T2 spin", size=13, fill=RED)
+    s.text(580, 535, "T1 spin", size=13, fill=MUTED)
 
-    lock_box(s, *S, "S", "T1", "spin")
-    lock_box(s, *R, "R", "free", "spin")
-    lock_box(s, *G, "G", "T2", "inside", stroke=GREEN, title_fill=GREEN,
+    lock_box(s, *C1, "C1", "T1", "cs", "try")
+    lock_box(s, *F, "F", "free", "try", "try")
+    lock_box(s, *C2, "C2", "T2", "try", "cs", stroke=GREEN, title_fill=GREEN,
              fill="#E8F0EC")
-    s.text(78, 296, "start", size=12.5, fill=RED, anchor="end", weight="600")
 
-    s.text(80, 450, "一条永远不到 G 的执行", size=14, fill=MUTED)
-    s.text(80, 486, "σ = (S R)^ω", size=22, fill=INK, family=MONO)
-    s.text(420, 486, "G 有入边；但这条执行永远不选它", size=13.5, fill=MUTED)
+    s.text(80, 630, "一条永远不到 C2 的执行", size=14, fill=MUTED)
+    s.text(80, 662, "σ = (F C1)^ω", size=22, fill=INK, family=MONO)
+    s.text(400, 662, "C2 有入边；但这条执行永远不选它", size=13, fill=MUTED)
     s.save("03-lasso")
 
 
-# ---------------------------------------------------------------- figure 3
 def fig3():
     h = 565
     s = SVG(W, h)
@@ -357,35 +357,38 @@ def fig3():
 
 # ---------------------------------------------------------------- figure 4
 def fig4():
-    h = 560
+    h = 710
     s = SVG(W, h)
     kicker(s, "图 5 / ATTRACTOR")
     title(s, "点亮：从目标倒着长",
-          "同一张锁状态图：只有 G 被点亮")
+          "同一张锁状态图：只有 C2 被点亮")
 
-    S, R, G = (180, 290), (450, 290), (740, 290)
-    s.rect(80, 210, 460, 160, rx=26, fill=RED, stroke="none", opacity=0.05)
-    s.rect(80, 210, 460, 160, rx=26, fill="none", stroke=RED, sw=1.2,
+    C1, F, C2 = (450, 190), (450, 360), (450, 530)
+    s.rect(300, 125, 310, 335, rx=24, fill=RED, stroke="none", opacity=0.05)
+    s.rect(300, 125, 310, 335, rx=24, fill="none", stroke=RED, sw=1.2,
            dash="5 6", opacity=0.45)
-    s.text(310, 188, "点不亮：坏环", size=15, fill=RED, anchor="middle", weight="700")
+    s.text(620, 145, "点不亮：坏环", size=15, fill=RED, anchor="start", weight="700")
 
-    s.arrow((S[0] + 88, S[1]), (R[0] - 88, R[1]), color=RED, sw=2.3)
-    s.arrow((R[0] - 55, R[1] - 54), (S[0] + 55, S[1] - 54),
-            curve=35, color=RED, sw=2.3)
-    s.arrow((R[0] + 88, R[1]), (G[0] - 88, G[1]), color=MUTED, sw=2.0, dash="6 6")
-    s.text(595, 265, "有出口，但没走", size=12.5, fill=MUTED,
-           anchor="middle")
+    s.arrow((432, 306), (432, 244), color=RED, sw=2.3)
+    s.arrow((468, 244), (468, 306), color=RED, sw=2.3)
+    s.arrow((432, 414), (432, 476), color=MUTED, sw=2.0, dash="6 6")
+    s.arrow((468, 476), (468, 414), color=MUTED, sw=1.6, dash="6 6")
+    s.arrow((538, 170), (538, 210), curve=-35, color=RED, sw=2.0)
+    s.arrow((538, 510), (538, 550), curve=-35, color=MUTED, sw=1.6)
 
-    lock_box(s, *S, "S", "T1", "spin", rank="∞")
-    lock_box(s, *R, "R", "free", "spin", rank="∞")
-    lock_box(s, *G, "G", "T2", "inside", stroke=GREEN, title_fill=GREEN,
+    s.text(420, 445, "有出口，但没走", size=13, fill=MUTED, anchor="end")
+    s.text(580, 195, "T2 spin", size=13, fill=RED)
+
+    lock_box(s, *C1, "C1", "T1", "cs", "try", rank="∞")
+    lock_box(s, *F, "F", "free", "try", "try", rank="∞")
+    lock_box(s, *C2, "C2", "T2", "try", "cs", stroke=GREEN, title_fill=GREEN,
              fill="#E8F0EC", rank="0")
 
-    s.text(80, 440, "先点亮 G（0 步）。只有“所有后继都亮了”的点才会亮。",
+    s.text(80, 620, "先点亮 C2（0 步）。只有“所有后继都亮了”的点才会亮。",
            size=13.5, fill=MUTED)
-    s.text(80, 466, "R 有一条边回到 S，S 又回到 R；所以 S、R 都停在 ∞。",
+    s.text(80, 646, "F 有一条边回到 C1，C1 又回到 F；所以 F、C1 都停在 ∞。",
            size=13.5, fill=MUTED)
-    s.text(80, 510, "0 = 目标    ∞ = 点不亮", size=12.5, fill=MUTED, spacing=1)
+    s.text(80, 680, "0 = 目标    ∞ = 点不亮", size=12.5, fill=MUTED, spacing=1)
     s.save("05-peeling")
 
 
@@ -588,42 +591,46 @@ def fig_safety():
 
 # ---------------------------------------------------------------- CTL paths
 def fig_ctl():
-    h = 400
+    h = 720
     s = SVG(W, h)
     kicker(s, "CTL / PATHS")
-    title(s, "EF 与 AF：一条路，还是所有路",
-          "同一个状态图，换一个路径量词，答案就不同")
+    title(s, "EF / AF / EG / AG：四种路径量词",
+          "同一棵计算树，换一个量词，答案就不同")
 
-    def panel(x0, mode):
-        s.text(x0 + 20, 162, mode, size=20, fill=INK, weight="700")
-        ok = (mode == "EF G")
+    def panel(x0, y0, mode, note, ok, c2c, c1c):
+        s.text(x0 + 20, y0 + 24, mode, size=20, fill=INK, weight="700")
         badge = (GREEN, "✓ 成立") if ok else (RED, "✗ 不成立")
-        s.text(x0 + 330, 162, badge[1], size=14, fill=badge[0],
+        s.text(x0 + 380, y0 + 24, badge[1], size=14, fill=badge[0],
                anchor="end", weight="700")
 
-        R = (x0 + 195, 215)
-        Gp = (x0 + 105, 305)
-        Sp = (x0 + 285, 305)
-        s.arrow((R[0] - 12, R[1] + 16), (Gp[0] + 12, Gp[1] - 16),
-                color=GREEN, sw=2.2)
-        s.arrow((R[0] + 12, R[1] + 16), (Sp[0] - 12, Sp[1] - 16),
-                color=(MUTED if ok else RED), sw=2.2)
-        s.arrow((Sp[0] + 6, Sp[1] - 16), (R[0] + 20, R[1] + 8),
-                curve=34, color=(MUTED if ok else RED), sw=1.6, dash="4 5")
-        s.text(x0 + 292, 258, "…", size=18, fill=(MUTED if ok else RED))
+        F = (x0 + 200, y0 + 100)
+        C2 = (x0 + 95, y0 + 205)
+        C1 = (x0 + 305, y0 + 205)
 
-        s.circle(*R, 22, fill=PAPER, stroke=INK, sw=2)
-        s.text(R[0], R[1] + 6, "R", size=16, fill=INK, anchor="middle", weight="600")
-        s.circle(*Gp, 22, fill=GREEN, stroke=GREEN, sw=2)
-        s.text(Gp[0], Gp[1] + 6, "G", size=16, fill="#FFFFFF", anchor="middle", weight="600")
-        s.circle(*Sp, 22, fill=PAPER, stroke=(MUTED if ok else RED), sw=2)
-        s.text(Sp[0], Sp[1] + 6, "S", size=16, fill=INK, anchor="middle", weight="600")
+        s.arrow((F[0] - 12, F[1] + 16), (C2[0] + 12, C2[1] - 16),
+                color=c2c, sw=2.1)
+        s.arrow((F[0] + 12, F[1] + 16), (C1[0] - 12, C1[1] - 16),
+                color=c1c, sw=2.1)
+        s.arrow((C1[0] + 6, C1[1] - 16), (F[0] + 20, F[1] + 8),
+                curve=32, color=c1c, sw=1.5, dash="4 5")
+        s.text(x0 + 290, y0 + 146, "…", size=18, fill=c1c)
 
-        note = "存在一条路到 G" if ok else "有一条路永远到不了 G"
-        s.text(x0 + 20, 360, note, size=14, fill=badge[0])
+        s.circle(*F, 20, fill=PAPER, stroke=INK, sw=2)
+        s.text(F[0], F[1] + 6, "F", size=16, fill=INK, anchor="middle", weight="600")
 
-    panel(40, "EF G")
-    panel(470, "AF G")
+        for pos, lab, col in ((C2, "C2", c2c), (C1, "C1", c1c)):
+            fill = col if col in (GREEN, RED) else PAPER
+            txt = "#FFFFFF" if fill in (GREEN, RED) else INK
+            s.circle(*pos, 20, fill=fill, stroke=col, sw=2)
+            s.text(pos[0], pos[1] + 5, lab, size=14, fill=txt,
+                   anchor="middle", weight="600")
+
+        s.text(x0 + 20, y0 + 258, note, size=14, fill=badge[0])
+
+    panel(40, 120, "EF C2", "有一条路到 C2", True, GREEN, MUTED)
+    panel(460, 120, "AF C2", "有一条路永远到不了 C2", False, GREEN, RED)
+    panel(40, 400, "EG ¬C2", "有一条路永远避开 C2", True, MUTED, GREEN)
+    panel(460, 400, "AG ¬C2", "有一条路会到 C2", False, RED, GREEN)
     s.save("ctl-paths")
 
 
