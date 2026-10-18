@@ -10,11 +10,11 @@ subprocess.run(["pandoc", str(md), "-f", "markdown", "-t", "html5",
                 "--no-highlight", "-o", str(frag_path)], check=True)
 frag = frag_path.read_text(encoding="utf-8")
 
-# subtitle -> styled subtitle + meta line
-frag = frag.replace(
-    '<p><em>从“永远不会发生的 bug”说起：liveness、无限轨迹与方程</em></p>',
-    '<p class="subtitle"><em>从“永远不会发生的 bug”说起：liveness、无限轨迹与方程</em></p>\n'
-    '<div class="meta">约 15 分钟 · 5 张图</div>')
+# subtitle -> styled subtitle + meta line (the first <p><em> after the h1)
+frag = re.sub(
+    r'(</h1>\s*)<p><em>(.*?)</em></p>',
+    r'\1<p class="subtitle"><em>\2</em></p>\n<div class="meta">约 15 分钟 · 5 张图</div>',
+    frag, count=1, flags=re.S)
 
 # figure captions
 frag = frag.replace('<p><em>图 ', '<p class="caption"><em>图 ')
@@ -144,8 +144,8 @@ doc = f"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>永远，是一个不动点</title>
-<meta name="description" content="写给软件工程师的 liveness 与不动点科普：从永远不会发生的 bug，到无限轨迹、套索与公平性。">
+<title>永远不报错的 Bug</title>
+<meta name="description" content="写给软件工程师的 liveness 与不动点科普：从永远不报错的 Bug，到无限轨迹、套索与公平性。">
 <style>{css}</style>
 </head>
 <body>

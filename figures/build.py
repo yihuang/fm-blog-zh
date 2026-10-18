@@ -157,7 +157,7 @@ def fig1():
     h = 500
     s = SVG(W, h)
     kicker(s, "图 1 / SAFETY & LIVENESS")
-    title(s, "两种坏消息", "证据的长度，决定了你该怎么找它")
+    title(s, "两种 Bug", "证据的长度，决定了你该怎么找它")
 
     # panels
     for x in (40, 470):
@@ -206,7 +206,7 @@ def fig1():
     s.path("M 512 345 L 512 356 L 777 356 L 777 345", stroke=RED, sw=1.6)
     s.text(645, 382, "任意长的前缀", size=16, fill=RED, anchor="middle", weight="600")
     s.text(494, 416, "看多久都不能定罪", size=15, fill=INK)
-    s.save("01-two-kinds-of-bad-news")
+    s.save("01-two-kinds-of-bugs")
 
 
 # ---------------------------------------------------------------- figure 2
@@ -214,7 +214,7 @@ def fig2():
     h = 540
     s = SVG(W, h)
     kicker(s, "图 2 / LASSO")
-    title(s, "反例的形状：套索", "有限图里的无限坏行为，总能写成一个环")
+    title(s, "反例的形状：一个环", "有限图里的无限坏行为，总能写成一个环")
 
     # blob around the cycle
     s.path("M 312 280 C 310 196 392 166 462 190 C 530 213 535 340 470 372 "
@@ -469,12 +469,13 @@ def cover():
     # a faint oversized ring in the background
     s.circle(700, 250, 210, fill="none", stroke=RED, sw=1, opacity=0.06)
     s.text(60, 52, "形式化验证 · 科普", size=13, fill=RED, spacing=2.6, weight="700")
-    s.text(60, 150, "永远，是", size=58, fill=INK, weight="700")
-    s.text(60, 222, "一个不动点", size=58, fill=INK, weight="700")
-    s.path("M 60 246 L 330 246", stroke=RED, sw=3)
-    s.text(60, 286, "liveness、无限轨迹与方程", size=21, fill=MUTED)
+    s.text(60, 150, "永远不报错的", size=46, fill=INK, weight="700")
+    s.text(60, 222, "Bug", size=66, fill=RED, weight="700")
+    s.path("M 60 246 L 190 246", stroke=RED, sw=3)
+    s.text(60, 288, "程序验证里的 liveness 与不动点", size=18, fill=MUTED)
+    s.text(60, 316, "从“最终”到方程", size=14, fill=MUTED)
     s.text(60, 430, "写给不熟悉形式化验证的软件工程师", size=13, fill=MUTED)
-    s.text(60, 456, "不需要预备知识，只需要写过几行会“卡住”的代码", size=12, fill=MUTED)
+    s.text(60, 456, "不需要预备知识", size=12, fill=MUTED)
 
     # lasso: stem into a loop with an exit
     cx, cy, r = 700, 255, 86
