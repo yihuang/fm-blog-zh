@@ -213,7 +213,7 @@ def fig1():
 def fig2():
     h = 540
     s = SVG(W, h)
-    kicker(s, "图 2 / LASSO")
+    kicker(s, "图 3 / LASSO")
     title(s, "反例的形状：一个环", "有限图里的无限坏行为，总能写成一个环")
 
     # blob around the cycle
@@ -267,14 +267,14 @@ def fig2():
            anchor="middle", weight="700")
     s.text(632, 464, "模型检查器找 liveness bug，", size=13, fill=MUTED)
     s.text(632, 484, "本质上就是在找这个环。", size=13, fill=MUTED)
-    s.save("02-lasso")
+    s.save("03-lasso")
 
 
 # ---------------------------------------------------------------- figure 3
 def fig3():
     h = 565
     s = SVG(W, h)
-    kicker(s, "图 3 / LEAST & GREATEST FIXED POINTS")
+    kicker(s, "图 4 / LEAST & GREATEST FIXED POINTS")
     title(s, "两个不动点：从下往上，从上往下",
           "方程本身有很多解；“最小”和“最大”替我们挑出答案")
 
@@ -321,14 +321,14 @@ def fig3():
     s.text(494, 498, "X(0) = S,   X(n+1) = f(X(n))", size=12.5, fill=INK, family=MONO)
     s.text(450, 540, "有限状态 → 最多 |S|+1 轮一定停；这就是“解方程”能替代“跑无限步”的原因。",
            size=14.5, fill=MUTED, anchor="middle")
-    s.save("03-two-fixed-points")
+    s.save("04-two-fixed-points")
 
 
 # ---------------------------------------------------------------- figure 4
 def fig4():
     h = 610
     s = SVG(W, h)
-    kicker(s, "图 4 / ATTRACTOR")
+    kicker(s, "图 5 / ATTRACTOR")
     title(s, "点亮：从目标倒着长",
           "第 k 轮点亮的点，保证最多 k 步到达目标")
 
@@ -391,14 +391,14 @@ def fig4():
     s.text(740, 508, "∞ = 存在一条", size=12, fill=MUTED)
     s.text(740, 524, "永远不到 G 的路", size=12, fill=MUTED)
 
-    s.save("04-peeling")
+    s.save("05-peeling")
 
 
 # ---------------------------------------------------------------- figure 5
 def fig5():
     h = 480
     s = SVG(W, h)
-    kicker(s, "图 5 / FAIRNESS")
+    kicker(s, "图 6 / FAIRNESS")
     title(s, "公平性：liveness 的隐形前提",
           "没有公平的调度，“最终”可以被无限期推迟")
 
@@ -459,7 +459,7 @@ def fig5():
            anchor="middle", family=MONO)
     s.text(450, 452, "弱公平：从某一刻起一直 enabled，就会无限多次被执行",
            size=12.5, fill=MUTED, anchor="middle")
-    s.save("05-fairness")
+    s.save("06-fairness")
 
 
 # ---------------------------------------------------------------- cover
@@ -501,6 +501,64 @@ def cover():
     s.save("00-cover")
 
 
+
+
+# ---------------------------------------------------------------- temporal patterns
+def fig_temporal():
+    h = 620
+    s = SVG(W, h)
+    kicker(s, "图 2 / FOUR PATTERNS")
+    title(s, "四种时间模式", "同一条时间线，四种不同的承诺")
+    s.text(40, 146, "横轴是时间；实心 = p 成立，空心 = p 不成立。", size=13.5, fill=MUTED)
+
+    rows = [
+        (230, "◇p", "最终 p", "发生一次就算数"),
+        (330, "□p", "永远 p", "一次都不能少"),
+        (430, "□◇p", "无限多次 p", "反复发生，可以中断"),
+        (530, "◇□p", "最终永远 p", "从某一刻起不再停"),
+    ]
+    xs = [260 + i * 58 for i in range(11)]
+    for y, sym, cn, note in rows:
+        s.path(f"M 250 {y} L 855 {y}", stroke=LINE, sw=1.2)
+        s.text(40, y - 8, sym, size=25, fill=INK, family=MONO, weight="600")
+        s.text(40, y + 20, cn, size=15, fill=INK, weight="600")
+        s.text(40, y + 40, note, size=12, fill=MUTED)
+
+    # ◇p: one occurrence
+    for i, x in enumerate(xs):
+        if i == 5:
+            s.circle(x, 230, 9, fill=GREEN, stroke=GREEN)
+        else:
+            s.circle(x, 230, 8, fill=PAPER, stroke=MUTED, sw=1.4)
+    s.text(550, 205, "某一次", size=12, fill=GREEN, anchor="middle")
+
+    # □p: all occurrences
+    for x in xs:
+        s.circle(x, 330, 9, fill=GREEN, stroke=GREEN)
+
+    # □◇p: infinitely many occurrences
+    for i, x in enumerate(xs):
+        if i in (1, 4, 7, 10):
+            s.circle(x, 430, 9, fill=GREEN, stroke=GREEN)
+        else:
+            s.circle(x, 430, 8, fill=PAPER, stroke=MUTED, sw=1.4)
+    s.text(866, 438, "∞", size=22, fill=RED, anchor="middle", weight="700")
+
+    # ◇□p: from some point on, forever
+    s.rect(538, 505, 318, 50, rx=10, fill=GREEN, stroke="none", opacity=0.06)
+    s.path("M 538 500 L 538 560", stroke=GREEN, sw=1.2, dash="3 5")
+    s.text(548, 500, "从这一刻起", size=12, fill=GREEN, weight="600")
+    for i, x in enumerate(xs):
+        if i >= 5:
+            s.circle(x, 530, 9, fill=GREEN, stroke=GREEN)
+        else:
+            s.circle(x, 530, 8, fill=PAPER, stroke=MUTED, sw=1.4)
+
+    s.text(450, 598, "◇p、□◇p、◇□p 是 liveness；□p 是 safety。",
+           size=13, fill=MUTED, anchor="middle")
+    s.save("02-four-eventualities")
+
+
 if __name__ == "__main__":
-    for f in (fig1, fig2, fig3, fig4, fig5, cover):
+    for f in (fig1, fig_temporal, fig2, fig3, fig4, fig5, cover):
         f()
