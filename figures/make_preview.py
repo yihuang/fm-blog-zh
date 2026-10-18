@@ -13,11 +13,12 @@ frag = frag_path.read_text(encoding="utf-8")
 # subtitle -> styled subtitle + meta line (the first <p><em> after the h1)
 frag = re.sub(
     r'(</h1>\s*)<p><em>(.*?)</em></p>',
-    r'\1<p class="subtitle"><em>\2</em></p>\n<div class="meta">约 18 分钟 · 6 张图</div>',
+    r'\1<p class="subtitle"><em>\2</em></p>\n<div class="meta">约 18 分钟 · 7 张图</div>',
     frag, count=1, flags=re.S)
 
 # figure captions
 frag = frag.replace('<p><em>图 ', '<p class="caption"><em>图 ')
+frag = frag.replace('<p><em>小图', '<p class="caption"><em>小图')
 
 kicker = '<div class="kicker">形式化验证 · 科普</div>\n'
 

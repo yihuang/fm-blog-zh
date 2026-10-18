@@ -214,59 +214,35 @@ def fig2():
     h = 540
     s = SVG(W, h)
     kicker(s, "图 3 / LASSO")
-    title(s, "反例的形状：一个环", "有限图里的无限坏行为，总能写成一个环")
+    title(s, "反例的形状：一个环",
+          "把开头的锁例子画出来：S 和 R 转来转去，G 永远到不了")
 
-    # blob around the cycle
-    s.path("M 312 280 C 310 196 392 166 462 190 C 530 213 535 340 470 372 "
-           "C 402 405 314 368 312 280 Z",
-           fill=RED, stroke=RED, sw=1.2, dash="5 6", opacity=0.07)
-    s.path("M 312 280 C 310 196 392 166 462 190 C 530 213 535 340 470 372 "
-           "C 402 405 314 368 312 280 Z",
-           fill="none", stroke=RED, sw=1.2, dash="5 6", opacity=0.55)
+    S, R, G, r = (180, 280), (420, 280), (680, 280), 38
+    # bad cycle
+    s.rect(125, 210, 360, 150, rx=26, fill=RED, stroke="none", opacity=0.05)
+    s.rect(125, 210, 360, 150, rx=26, fill="none", stroke=RED, sw=1.2,
+           dash="5 6", opacity=0.45)
+    s.text(305, 190, "坏环", size=15, fill=RED, anchor="middle", weight="700")
 
-    p = {"s0": (110, 280), "s1": (220, 280), "s2": (340, 280),
-         "s3": (458, 208), "s4": (458, 352)}
-    # stem
-    s.arrow(p["s0"], p["s1"], r1=24, r2=24, color=INK, sw=2)
-    s.arrow(p["s1"], p["s2"], r1=24, r2=24, color=INK, sw=2)
-    # cycle
-    s.arrow(p["s2"], p["s3"], r1=24, r2=24, color=RED, sw=2.2)
-    s.arrow(p["s3"], p["s4"], r1=24, r2=24, color=RED, sw=2.2)
-    s.arrow(p["s4"], p["s2"], curve=-34, r1=24, r2=24, color=RED, sw=2.2)
-    # nodes
-    for k, (x, y) in p.items():
-        if k in ("s2", "s3", "s4"):
-            s.circle(x, y, 24, fill=PANEL, stroke=RED, sw=2.4)
-        else:
-            s.circle(x, y, 24, fill=PANEL, stroke=INK, sw=2)
-        s.text(x, y + 6, k, size=16, fill=INK, anchor="middle", family=MONO, weight="600")
-    # labels
-    s.text(400, 162, "p 从未出现", size=16, fill=RED, anchor="middle", weight="700")
-    s.path("M 400 172 L 400 188", stroke=RED, sw=1.4, dash="3 4")
-    s.path("M 110 350 L 110 362 L 220 362 L 220 350", stroke=MUTED, sw=1.5)
-    s.text(165, 388, "stem：有限，可打印", size=15, fill=MUTED, anchor="middle")
-    # loop label inside the shaded cycle
-    s.text(420, 272, "loop", size=13, fill=RED, family=MONO, weight="600", anchor="middle")
-    s.text(420, 292, "永远重复", size=13, fill=RED, anchor="middle")
+    s.arrow(S, R, r1=r, r2=r, color=RED, sw=2.3)
+    s.arrow(R, S, curve=62, r1=r, r2=r, color=RED, sw=2.3)
+    s.arrow(R, G, r1=r, r2=r, color=GREEN, sw=2.3, dash="6 6")
 
-    # formula
-    s.text(80, 462, "一条无限轨迹的有限写法", size=14, fill=MUTED)
-    s.text(80, 494, "σ = s₀ s₁ (s₂ s₃ s₄)^ω", size=20, fill=INK, family=MONO)
+    s.text(300, 228, "T1 又抢到", size=13, fill=RED, anchor="middle", weight="600")
+    s.text(300, 305, "T1 释放锁", size=13, fill=MUTED, anchor="middle")
+    s.text(550, 252, "T2 抢到（但没走）", size=13, fill=GREEN, anchor="middle", weight="600")
 
-    # right panel
-    s.rect(610, 140, 250, 380, rx=16, fill=PANEL, stroke="#E8DFCF", sw=1.2)
-    s.text(632, 182, "为什么一定是环？", size=20, fill=INK, weight="700")
-    steps = [("1", "有限个状态，无限步"), ("2", "必有状态重复"), ("3", "重复的那一段，就是环")]
-    for i, (n, t) in enumerate(steps):
-        y = 230 + i * 52
-        s.circle(646, y - 6, 12, fill=RED, stroke=RED, sw=1)
-        s.text(646, y - 1, n, size=12, fill="#FFFFFF", anchor="middle", weight="700")
-        s.text(668, y, t, size=15, fill=INK)
-    s.rect(632, 382, 206, 50, rx=10, fill="#F8E7E1", stroke="none")
-    s.text(735, 412, "反例 = 可达的坏环", size=17, fill=RED_DARK,
-           anchor="middle", weight="700")
-    s.text(632, 464, "模型检查器找 liveness bug，", size=13, fill=MUTED)
-    s.text(632, 484, "本质上就是在找这个环。", size=13, fill=MUTED)
+    s.node(*S, r, PAPER, RED, "S", label_fill=INK, size=18, sw=2.4)
+    s.node(*R, r, PAPER, RED, "R", label_fill=INK, size=18, sw=2.4)
+    s.node(*G, r, GREEN, GREEN, "G", size=18, sw=2.4)
+    s.text(S[0], S[1] + 64, "T1 持锁 / T2 等", size=13, fill=MUTED, anchor="middle")
+    s.text(R[0], R[1] + 64, "锁空闲", size=13, fill=MUTED, anchor="middle")
+    s.text(G[0], G[1] + 64, "T2 持锁", size=13, fill=MUTED, anchor="middle")
+    s.text(113, 286, "start", size=13, fill=RED, anchor="end", weight="600")
+
+    s.text(80, 432, "一条永远不到 G 的执行", size=14, fill=MUTED)
+    s.text(80, 468, "σ = (S R)^ω", size=22, fill=INK, family=MONO)
+    s.text(400, 468, "G 有入边；但这条执行永远不选它", size=13.5, fill=MUTED)
     s.save("03-lasso")
 
 
@@ -326,71 +302,37 @@ def fig3():
 
 # ---------------------------------------------------------------- figure 4
 def fig4():
-    h = 610
+    h = 540
     s = SVG(W, h)
     kicker(s, "图 5 / ATTRACTOR")
     title(s, "点亮：从目标倒着长",
-          "第 k 轮点亮的点，保证最多 k 步到达目标")
+          "同一张锁状态图：只有 G 被点亮")
 
-    G = (650, 300)
-    A = (545, 300)
-    B = (455, 205)
-    C = (455, 395)
-    D = (350, 300)
-    S = (232, 300)
-    X = (310, 485)
-    Y = (405, 535)
-    Z = (500, 485)
+    S, R, G, r = (150, 280), (390, 280), (650, 280), 38
+    s.rect(95, 210, 360, 150, rx=26, fill=RED, stroke="none", opacity=0.05)
+    s.rect(95, 210, 360, 150, rx=26, fill="none", stroke=RED, sw=1.2,
+           dash="5 6", opacity=0.45)
+    s.text(275, 190, "点不亮：坏环", size=15, fill=RED, anchor="middle", weight="700")
 
-    # core shading
-    s.rect(268, 448, 264, 112, rx=28, fill=RED, stroke="none", opacity=0.045)
-    s.rect(268, 448, 264, 112, rx=28, fill="none", stroke=RED, sw=1.3,
-           dash="5 6", opacity=0.42)
-    s.text(400, 438, "坏环：永远出不去", size=15, fill=RED, anchor="middle", weight="600")
+    s.arrow(S, R, r1=r, r2=r, color=RED, sw=2.3)
+    s.arrow(R, S, curve=62, r1=r, r2=r, color=RED, sw=2.3)
+    s.arrow(R, G, r1=r, r2=r, color=MUTED, sw=2.0, dash="6 6")
+    s.text(520, 252, "这条路存在，但不是所有路", size=12.5, fill=MUTED,
+           anchor="middle")
 
-    good = MUTED
-    s.arrow(A, G, r1=29, r2=39, color=good, sw=2.1)
-    s.arrow(B, A, r1=28, r2=29, color=good, sw=2.1)
-    s.arrow(C, A, r1=28, r2=29, color=good, sw=2.1)
-    s.arrow(D, B, r1=28, r2=28, color=good, sw=2.1)
-    s.arrow(D, C, r1=28, r2=28, color=good, sw=2.1)
-    s.arrow(S, D, r1=31, r2=28, color=GREEN, sw=2.5)
-    s.arrow(S, X, curve=14, r1=31, r2=27, color=RED, sw=2.5)
-    s.text(291, 286, "好路", size=13.5, fill=GREEN, anchor="middle", weight="600")
-    s.text(246, 410, "坏路", size=13.5, fill=RED, anchor="end", weight="600")
+    s.node(*S, r, RED, RED_DARK, "S", size=18, sw=2.4, rank="∞")
+    s.node(*R, r, RED, RED_DARK, "R", size=18, sw=2.4, rank="∞")
+    s.node(*G, r, GREEN, GREEN, "G", size=18, sw=2.4, rank="0",
+           rank_pos=(G[0] + 30, G[1] - 30))
+    s.text(S[0], S[1] + 64, "T1 持锁 / T2 等", size=13, fill=MUTED, anchor="middle")
+    s.text(R[0], R[1] + 64, "锁空闲", size=13, fill=MUTED, anchor="middle")
+    s.text(G[0], G[1] + 64, "T2 持锁", size=13, fill=MUTED, anchor="middle")
 
-    s.arrow(X, Y, r1=27, r2=27, color=RED, sw=2.5)
-    s.arrow(Y, Z, r1=27, r2=27, color=RED, sw=2.5)
-    s.arrow(Z, X, curve=-28, r1=27, r2=27, color=RED, sw=2.5)
-
-    s.node(*G, 34, GREEN, GREEN, "G", size=18, double=True, rank="0", rank_pos=(692, 253))
-    s.node(*A, 29, GREEN_LIGHT, GREEN, "A", size=17, rank="1")
-    s.node(*B, 28, AMBER, "#B98A2E", "B", label_fill=INK, size=17, rank="2", rank_fill="#8A6516")
-    s.node(*C, 28, AMBER, "#B98A2E", "C", label_fill=INK, size=17, rank="2", rank_fill="#8A6516")
-    s.node(*D, 28, ORANGE, "#B5623F", "D", size=17, rank="3")
-    s.node(*S, 31, RED, RED_DARK, "S", size=18, rank="∞")
-    s.node(*X, 27, RED, RED_DARK, "X", size=17, rank="∞")
-    s.node(*Y, 27, RED, RED_DARK, "Y", size=17, rank="∞")
-    s.node(*Z, 27, RED, RED_DARK, "Z", size=17, rank="∞")
-
-    s.text(650, 354, "Goal", size=13, fill=GREEN, anchor="middle", weight="600")
-    s.text(198, 318, "start", size=13, fill=RED, anchor="end", weight="600")
-
-    # legend
-    s.rect(720, 150, 152, 400, rx=14, fill=PANEL, stroke="#E8DFCF", sw=1.2)
-    s.text(740, 184, "rank = 轮次", size=15, fill=INK, weight="700")
-    s.text(740, 208, "第 k 轮 → 最多", size=12.5, fill=MUTED)
-    s.text(740, 225, "k 步到 G", size=12.5, fill=MUTED)
-    s.path("M 740 244 L 852 244", stroke=LINE, sw=1)
-    legend = [(GREEN, "0 目标"), (GREEN_LIGHT, "1 第 1 轮"), (AMBER, "2 第 2 轮"),
-              (ORANGE, "3 第 3 轮"), (RED, "∞ 点不亮")]
-    for i, (col, lab) in enumerate(legend):
-        y = 278 + i * 42
-        s.circle(746, y - 5, 7, fill=col, stroke="none")
-        s.text(764, y, lab, size=14, fill=INK)
-    s.text(740, 508, "∞ = 存在一条", size=12, fill=MUTED)
-    s.text(740, 524, "永远不到 G 的路", size=12, fill=MUTED)
-
+    s.text(80, 430, "先点亮 G（0 步）。只有“所有后继都亮了”的点才会亮。",
+           size=13.5, fill=MUTED)
+    s.text(80, 456, "R 有一条边回到 S，S 又回到 R；所以 S、R 都停在 ∞。",
+           size=13.5, fill=MUTED)
+    s.text(80, 500, "0 = 目标    ∞ = 点不亮", size=12.5, fill=MUTED, spacing=1)
     s.save("05-peeling")
 
 
@@ -559,6 +501,36 @@ def fig_temporal():
     s.save("02-four-eventualities")
 
 
+
+# ---------------------------------------------------------------- safety example
+def fig_safety():
+    h = 380
+    s = SVG(W, h)
+    kicker(s, "SAFETY EXAMPLE")
+    title(s, "永远安全：一个三状态的小例子",
+          "A、B 都在 Safe 里，但 B 有一条边到 Bad")
+
+    A, B, Bad, r = (220, 200), (440, 200), (680, 200), 36
+    s.rect(150, 135, 360, 130, rx=20, fill=GREEN, stroke=GREEN, sw=1.2,
+           dash="5 6", opacity=0.05)
+    s.text(330, 125, "Safe", size=14, fill=GREEN, anchor="middle", weight="600")
+
+    s.arrow(A, B, r1=r, r2=r, color=INK, sw=2.2)
+    s.arrow(B, A, curve=55, r1=r, r2=r, color=INK, sw=2.2)
+    s.arrow(B, Bad, r1=r, r2=r, color=RED, sw=2.2)
+
+    s.node(*A, r, PAPER, GREEN, "A", label_fill=INK, size=18, sw=2.4)
+    s.node(*B, r, PAPER, GREEN, "B", label_fill=INK, size=18, sw=2.4)
+    s.node(*Bad, r, RED, RED_DARK, "Bad", size=14, sw=2.4)
+    s.text(A[0], A[1] + 58, "安全", size=13, fill=MUTED, anchor="middle")
+    s.text(B[0], B[1] + 58, "安全", size=13, fill=MUTED, anchor="middle")
+    s.text(Bad[0], Bad[1] + 62, "违反安全", size=13, fill=RED, anchor="middle")
+
+    s.text(80, 330, "A、B 可以一直打转，但 B 有一条边到 Bad——所以 A、B 都不在 I* 里。",
+           size=13.5, fill=MUTED)
+    s.save("safety-example")
+
+
 if __name__ == "__main__":
-    for f in (fig1, fig_temporal, fig2, fig3, fig4, fig5, cover):
+    for f in (fig1, fig_temporal, fig2, fig3, fig_safety, fig4, fig5, cover):
         f()
