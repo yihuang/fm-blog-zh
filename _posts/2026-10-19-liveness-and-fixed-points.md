@@ -1,6 +1,21 @@
-# liveness 和不动点
-
-*从“永远完不成”到最小/最大不动点*
+---
+layout: post
+title: "liveness 和不动点"
+subtitle: "从“永远完不成”到最小/最大不动点"
+description: 写给软件工程师的 liveness 与不动点科普：从永远完不成的任务，到无限轨迹、套索、公平性与最小/最大不动点。
+date: 2026-10-19 09:00:00 +0800
+categories:
+  - 形式化验证
+tags:
+  - liveness
+  - 不动点
+  - 模型检查
+  - 并发
+reading_time: 20
+figure_count: 9
+cover: /images/00-cover-card.png
+image: /images/00-cover.png
+---
 
 > 写给不熟悉形式化验证的软件工程师。\
 > 不需要预备知识。
@@ -15,9 +30,11 @@
 
 为了把状态图限制在三个状态，下面的模型省略了线程的 idle：假设两个线程都在循环里不断请求锁，只区分 try（自旋）和 cs（临界区）。
 
-![锁的状态图](images/lock-state-graph.png)
+![锁的状态图]({{ '/images/lock-state-graph.png' | relative_url }})
+{: .post-figure}
 
 *小图：锁的状态图。每个状态标出 `lock`、T1、T2 的取值；实心点 = 持有，空心 = 空闲；try = 自旋，cs = 临界区。Init 是初始状态（start），锁空闲、两个线程都在 try；C1 是 T1 在临界区；C2 是 T2 在临界区。*
+{: .caption}
 
 图里画出了这三个状态之间的全部迁移：Init↔C1、Init↔C2，以及 C1/C2 上的两个自旋自环。
 
@@ -51,9 +68,11 @@ liveness 的违反没有这样的现场。你看到的每一个瞬间，都只�
 
 这不是说 liveness 比 safety 更严重，而是说它们的**证据形状**不同。形状不同，找它们的方法就不同。
 
-![safety 与 liveness 的证据形状对比](images/01-two-kinds-of-bugs.png)
+![safety 与 liveness 的证据形状对比]({{ '/images/01-two-kinds-of-bugs.png' | relative_url }})
+{: .post-figure}
 
 *图 1：safety 的违反有一段有限的前缀作证据；liveness 的违反只有无限长的轨迹才能作为证据。*
+{: .caption}
 
 ## 二、把“最终”画出来
 
@@ -68,9 +87,11 @@ liveness 的违反没有这样的现场。你看到的每一个瞬间，都只�
 
 这套“沿时间线看性质”的语言，叫**时序逻辑**（temporal logic）。上面四个记号，就是它最常用的四个词。
 
-![四种时间模式](images/02-four-eventualities.png)
+![四种时间模式]({{ '/images/02-four-eventualities.png' | relative_url }})
+{: .post-figure}
 
 *图 2：同样是“p 会发生”，四种时间模式完全不同：一次、一直、反复发生、最终稳定。*
+{: .caption}
 
 这四种模式，是后面所有讨论的词汇表。特别注意后两个：
 
@@ -129,9 +150,11 @@ safety 的违反是“不可挽回”的：坏事一旦发生，后面再补救�
 
 把开头的锁例子画成状态图，就是图 3：
 
-![锁状态图上的坏环](images/03-lasso.png)
+![锁状态图上的坏环]({{ '/images/03-lasso.png' | relative_url }})
+{: .post-figure}
 
 *图 3：Init↔C1 是坏环，Init→C2 是没走的出口。*
+{: .caption}
 
 所以这条执行就是 `(Init C1)^ω`：Init→C1→Init→C1……永远到不了 C2。这个例子里，起点 Init 本身就在环上，所以前缀是空的。
 
@@ -172,7 +195,7 @@ X₂ = X₁ ∪ { s' | 存在 s ∈ X₁，s → s' }
 …
 ```
 
-因为状态有限，最多迭代 |S|+1 轮，这个序列就停了。停下来的 Xₙ 就是 R*，也就是**最小不动点**（least fixed point），记作 μ。
+因为状态有限，最多迭代 `|S|+1` 轮，这个序列就停了。停下来的 Xₙ 就是 R*，也就是**最小不动点**（least fixed point），记作 μ。
 
 再看“永远安全”。
 
@@ -201,9 +224,11 @@ I* = Safe ∩ { s | s 的所有后继都在 I* 里 }
 
 举个小例子（见下面的小图）。假设状态图只有三个状态：A、B、Bad。A → B，B → A，B → Bad。Safe = {A, B}。
 
-![永远安全的三状态例子](images/safety-example.png)
+![永远安全的三状态例子]({{ '/images/safety-example.png' | relative_url }})
+{: .post-figure}
 
-*小图：Safe 只要求“现在满足安全性质”；I* 还要求“以后也走不到 Bad”。B 有一条边到 Bad，所以 A、B 都不在 I* 里。*
+*小图：Safe 只要求“现在满足安全性质”；I\* 还要求“以后也走不到 Bad”。B 有一条边到 Bad，所以 A、B 都不在 I\* 里。*
+{: .caption}
 
 - 从 A 出发，可以走 A → B → Bad，所以 A 不在 I* 里；
 - 从 B 出发，也可以 B → Bad，所以 B 也不在 I* 里。
@@ -234,9 +259,11 @@ Y₀ = S      Y₁ = g(Y₀)      Y₂ = g(Y₁)      …
 
 > 方程只描述“一步”，解却描述“所有步”。不动点，就是把“一步”和“永远”接起来的那座桥。
 
-![最小不动点与最大不动点的迭代方向](images/04-two-fixed-points.png)
+![最小不动点与最大不动点的迭代方向]({{ '/images/04-two-fixed-points.png' | relative_url }})
+{: .post-figure}
 
 *图 4：最小不动点从空集往上长，最大不动点从全集往下剥。两者都在有限步内停，停下来的地方就是方程的解。*
+{: .caption}
 
 ## 六、两个不动点，两种“永远”
 
@@ -294,9 +321,11 @@ Y₀ = S      Y₁ = g(Y₀)      Y₂ = g(Y₁)      …
 >
 > 很多文章说“liveness 是最小不动点”，这句话对，但省略了“好集合”三个字。真正重要的是：你是在从目标往外点亮，还是在从全集往里剥。两种算法算的是同一个答案。
 
-![EF、AF、EG、AG 四种路径量词](images/ctl-paths.png)
+![EF、AF、EG、AG 四种路径量词]({{ '/images/ctl-paths.png' | relative_url }})
+{: .post-figure}
 
 *小图：同一棵计算树上的四种路径量词。EF C2 只要有一条路到 C2；AF C2 要求所有路都到 C2，C1↔Init 的环让它不成立；EG ¬C2 存在一条路永远避开 C2；AG ¬C2 要求所有路都避开 C2，Init→C2 这条路让它不成立。*
+{: .caption}
 
 这三种记号经常混着用，但它们看的东西不同：
 
@@ -312,9 +341,11 @@ Y₀ = S      Y₁ = g(Y₀)      Y₂ = g(Y₁)      …
 
 现在回到最初的问题：怎样证明“所有路径最终都会到达目标”？把开头的锁例子画成状态图（图 5），目标就是 C2。
 
-![同一张锁状态图上的点亮](images/05-peeling.png)
+![同一张锁状态图上的点亮]({{ '/images/05-peeling.png' | relative_url }})
+{: .post-figure}
 
 *图 5：只有 C2 被点亮；Init、C1 留在坏环里。*
+{: .caption}
 
 有一个非常朴素的算法。先把 Goal 点亮；然后看哪些状态，它们的每一个后继都已经被点亮——这些状态也点亮；重复这个过程，直到没有新的状态被点亮。
 
@@ -378,9 +409,11 @@ C2 一旦到达，目标就满足了；它之后释放锁回到 Init，不影响
 
 公平性假设太强，会掩盖真正的饥饿 bug；太弱，又证不出东西。所以写规格时，最好把假设显式写出来：“在假设 F 下，最终 P”。如果你说不出 F 是什么，你拥有的不是定理，只是希望。
 
-![不公平调度与弱公平调度的对比](images/06-fairness.png)
+![不公平调度与弱公平调度的对比]({{ '/images/06-fairness.png' | relative_url }})
+{: .post-figure}
 
 *图 6：不公平的调度可以让“最终”永远不到来。公平性不是代码的属性，而是代码与环境的联合假设。*
+{: .caption}
 
 ## 九、你早就在写不动点了
 

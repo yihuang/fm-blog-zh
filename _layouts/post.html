@@ -1,0 +1,66 @@
+---
+layout: default
+---
+<div class="article-shell">
+  <nav class="breadcrumb" aria-label="面包屑">
+    <a href="{{ '/' | relative_url }}">首页</a>
+    <span class="breadcrumb-sep" aria-hidden="true">/</span>
+    <span>{{ page.categories | first | default: '文章' }}</span>
+  </nav>
+
+  <article class="article-card post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+    <header class="post-header">
+      <p class="kicker">{{ page.categories | join: ' · ' | default: '文章' }}</p>
+      <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
+      {%- if page.subtitle -%}
+      <p class="post-subtitle">{{ page.subtitle }}</p>
+      {%- endif -%}
+      <div class="post-meta">
+        <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: '%Y 年 %-m 月 %-d 日' }}</time>
+        {%- if page.reading_time -%}
+        <span class="dot" aria-hidden="true">·</span>
+        <span>约 {{ page.reading_time }} 分钟</span>
+        {%- endif -%}
+        {%- if page.figure_count -%}
+        <span class="dot" aria-hidden="true">·</span>
+        <span>{{ page.figure_count }} 张图</span>
+        {%- endif -%}
+      </div>
+    </header>
+
+    <div class="post-content e-content" itemprop="articleBody">
+      {{ content }}
+    </div>
+
+    <div class="endmark" aria-hidden="true">— 完 —</div>
+
+    <footer class="post-footer">
+      {%- if page.tags and page.tags.size > 0 -%}
+      <div class="post-footer-tags">
+        <span class="post-footer-label">标签</span>
+        {%- for tag in page.tags -%}
+        <a class="tag" href="{{ '/tags/' | relative_url }}#{{ tag | replace: ' ', '-' }}">{{ tag }}</a>
+        {%- endfor -%}
+      </div>
+      {%- endif -%}
+      <a class="back-home" href="{{ '/' | relative_url }}"><span aria-hidden="true">←</span> 返回首页</a>
+    </footer>
+  </article>
+
+  {%- if page.previous or page.next -%}
+  <nav class="post-pager" aria-label="文章导航">
+    {%- if page.previous -%}
+    <a class="pager-link" href="{{ page.previous.url | relative_url }}">
+      <span class="pager-label">上一篇</span>
+      <span class="pager-title">{{ page.previous.title }}</span>
+    </a>
+    {%- endif -%}
+    {%- if page.next -%}
+    <a class="pager-link pager-link--next" href="{{ page.next.url | relative_url }}">
+      <span class="pager-label">下一篇</span>
+      <span class="pager-title">{{ page.next.title }}</span>
+    </a>
+    {%- endif -%}
+  </nav>
+  {%- endif -%}
+</div>

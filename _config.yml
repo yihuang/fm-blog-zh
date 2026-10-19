@@ -1,0 +1,51 @@
+# Site
+title: 形式化笔记
+tagline: 写给软件工程师的形式化方法笔记
+description: 关于形式化方法、并发与分布式系统的中文笔记。从具体问题出发，把抽象的概念讲成可以上手用的工具。
+url: "https://yihuang.github.io"
+baseurl: "/fm-blog-zh"
+lang: zh-CN
+timezone: Asia/Shanghai
+
+# Author
+author:
+  name: yihuang
+  url: "https://github.com/yihuang"
+github_username: yihuang
+
+# Theme
+theme: minima
+minima:
+  date_format: "%Y 年 %-m 月 %-d 日"
+
+# Build
+markdown: kramdown
+permalink: /posts/:title/
+show_excerpts: true
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  # The article uses a single, deliberately plain code block; keep it free of
+  # token colors so the warm reading style stays consistent.
+  syntax_highlighter: none
+
+# Plugins supported by GitHub Pages
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+feed:
+  excerpt_only: false
+
+# Keep generated output and build tooling out of the site
+exclude:
+  - figures
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+  - .bundle
+  - images/src

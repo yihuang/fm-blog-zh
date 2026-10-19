@@ -646,6 +646,17 @@ def fig_ctl():
     s.save("ctl-paths")
 
 
+def card_cover():
+    """Crop the cover into the wide thumbnail used by the homepage card."""
+    subprocess.run([
+        "magick", "images/00-cover.png",
+        "-crop", "1000x562+800+219", "+repage",
+        "-resize", "1200x675", "images/00-cover-card.png",
+    ], check=True)
+    print("wrote 00-cover-card")
+
+
 if __name__ == "__main__":
     for f in (fig_open, fig1, fig_temporal, fig2, fig3, fig_safety, fig_ctl, fig4, fig5, cover):
         f()
+    card_cover()

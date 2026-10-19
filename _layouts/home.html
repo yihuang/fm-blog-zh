@@ -1,0 +1,63 @@
+---
+layout: default
+---
+{%- assign latest = site.posts.first -%}
+<section class="home-hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <p class="kicker">形式化验证 · 科普笔记</p>
+      <h1 class="hero-title">{{ site.title | escape }}</h1>
+      <p class="hero-lede">{{ site.description | strip_newlines }}</p>
+      <div class="hero-meta">
+        <span>{{ site.posts.size }} 篇文章</span>
+        {%- if latest -%}
+        <span class="dot" aria-hidden="true">·</span>
+        <span>最近更新 {{ latest.date | date: '%Y 年 %-m 月 %-d 日' }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <span class="hero-infinity">∞</span>
+      <span class="hero-art-label">eventually</span>
+    </div>
+  </div>
+</section>
+
+<div class="home-body">
+  <section class="post-feed" aria-labelledby="latest-heading">
+    <div class="section-head">
+      <h2 id="latest-heading"><span class="section-mark" aria-hidden="true"></span>最新文章</h2>
+      <span class="section-count">{{ site.posts.size }} 篇</span>
+    </div>
+    {%- for post in site.posts -%}
+      {%- include post-card.html post=post featured=forloop.first -%}
+    {%- endfor -%}
+    {%- if site.posts.size == 0 -%}
+    <p class="empty-state">还没有文章。</p>
+    {%- endif -%}
+  </section>
+
+  <aside class="home-aside" aria-label="关于与订阅">
+    <section class="aside-card">
+      <p class="aside-kicker">关于本站</p>
+      <p>这里记录形式化方法、并发与分布式系统里的一些概念。文章尽量从具体问题出发，写给不熟悉形式化验证的软件工程师。</p>
+      <a class="text-link" href="https://github.com/{{ site.github_username }}" rel="noopener" target="_blank">在 GitHub 上查看源码 <span aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="aside-card">
+      <p class="aside-kicker">标签</p>
+      <div class="tag-cloud">
+        {%- assign sorted_tags = site.tags | sort -%}
+        {%- for tag in sorted_tags -%}
+        <a class="tag" href="{{ '/tags/' | relative_url }}#{{ tag[0] | replace: ' ', '-' }}">{{ tag[0] }}<span class="tag-count">{{ tag[1].size }}</span></a>
+        {%- endfor -%}
+      </div>
+    </section>
+
+    <section class="aside-card aside-card--accent">
+      <p class="aside-kicker">订阅</p>
+      <p>通过 RSS 阅读新文章，不需要邮箱，也不会有算法。</p>
+      <a class="button" href="{{ '/feed.xml' | relative_url }}">订阅 RSS</a>
+    </section>
+  </aside>
+</div>

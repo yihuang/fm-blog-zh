@@ -1,0 +1,15 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- if page.url == '/' -%}
+  {%- seo title=false -%}
+  <title>{{ site.title | escape }} · {{ site.tagline | escape }}</title>
+  {%- else -%}
+  {%- seo -%}
+  {%- endif -%}
+  <meta name="theme-color" content="#F2ECE1">
+  <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+  {%- feed_meta -%}
+</head>
