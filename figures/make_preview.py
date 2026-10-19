@@ -168,4 +168,6 @@ window.addEventListener('load', () => {{
 
 out = ROOT / "preview.html"
 out.write_text(doc, encoding="utf-8")
-print("wrote", out, len(doc), "bytes")
+# GitHub Pages serves index.html at the site root
+(ROOT / "index.html").write_text(doc, encoding="utf-8")
+print("wrote", out, "and index.html", len(doc), "bytes")
