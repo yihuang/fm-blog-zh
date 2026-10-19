@@ -27,9 +27,12 @@ kramdown:
   input: GFM
   hard_wrap: false
   auto_ids: true
-  # The article uses a single, deliberately plain code block; keep it free of
-  # token colors so the warm reading style stays consistent.
-  syntax_highlighter: none
+  # GitHub Pages enables Rouge; the stylesheet normalises its markup into the
+  # site's plain dark code block so local and production output match.
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
 
 # Plugins supported by GitHub Pages
 plugins:

@@ -787,6 +787,30 @@ img {
   font-size: inherit;
 }
 
+/* GitHub Pages renders fenced code through Rouge. Minima gives its
+   `.highlight` wrapper a light background, which is more specific than the
+   plain `pre` rule and hides the light code text. Normalise the wrapper to
+   the same plain dark block and drop the light token colours. */
+.post-content div.highlighter-rouge {
+  margin: 24px 0 30px;
+}
+
+.post-content .highlighter-rouge .highlight {
+  margin: 0;
+  overflow: hidden;
+  background: #2A2E35;
+  color: #F6EEE2;
+  border-radius: 10px;
+}
+
+.post-content .highlight code,
+.post-content .highlight code * {
+  color: inherit !important;
+  background: transparent !important;
+  font-weight: inherit !important;
+  font-style: inherit !important;
+}
+
 .post-content table {
   width: 100%;
   margin: 24px 0 30px;
