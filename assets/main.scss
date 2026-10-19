@@ -634,6 +634,131 @@ img {
   padding: 48px 32px 88px;
 }
 
+.article-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.article-column {
+  min-width: 0;
+}
+
+.toc-rail,
+.toc-rail[hidden] {
+  display: none;
+}
+
+@media (min-width: 1220px) {
+  .article-shell {
+    max-width: 1200px;
+    padding: 48px 32px 96px;
+  }
+
+  .article-layout {
+    grid-template-columns: minmax(0, 850px);
+    gap: 40px;
+    align-items: start;
+    justify-content: center;
+    max-width: 1130px;
+    margin: 0 auto;
+  }
+
+  .toc-desktop .article-layout {
+    grid-template-columns: minmax(0, 850px) 240px;
+  }
+
+  .toc-desktop.has-toc-rail .toc-rail {
+    display: block;
+    position: sticky;
+    top: 108px;
+    max-height: calc(100vh - 140px);
+    padding: 18px 8px 18px 20px;
+    overflow-y: auto;
+    border-left: 1px solid var(--line);
+    scrollbar-width: thin;
+  }
+
+  .toc-desktop .post-content details.toc {
+    display: none;
+  }
+
+  .toc-rail-title {
+    margin: 0 0 14px;
+    color: var(--red);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .18em;
+  }
+
+  .toc-rail-body ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc-rail-body li {
+    margin: 0;
+  }
+
+  .toc-rail-body a {
+    position: relative;
+    display: block;
+    padding: 5px 0;
+    color: var(--muted);
+    border: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    transition: color .15s ease;
+  }
+
+  .toc-rail-body a::before {
+    content: "";
+    position: absolute;
+    left: -21px;
+    top: 50%;
+    width: 2px;
+    height: 0;
+    background: var(--red);
+    transform: translateY(-50%);
+    transition: height .15s ease;
+  }
+
+  .toc-rail-body a:hover {
+    color: var(--red-dark);
+  }
+
+  .toc-rail-body a.is-active {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  .toc-rail-body a.is-active::before {
+    height: 18px;
+  }
+
+  .toc-rail::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .toc-rail::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 4px;
+  }
+
+  .toc-rail-top {
+    display: inline-block;
+    margin-top: 18px;
+    color: var(--muted);
+    border: 0;
+    font-size: 11px;
+    letter-spacing: .12em;
+  }
+
+  .toc-rail-top:hover {
+    color: var(--red);
+  }
+}
+
 .article-card {
   max-width: 850px;
   margin: 0 auto;
@@ -1397,9 +1522,18 @@ img {
   .site-footer,
   .post-footer,
   .post-pager,
+  .toc-rail,
   .endmark,
   .hero-art {
-    display: none;
+    display: none !important;
+  }
+
+  .post-content details.toc {
+    display: block !important;
+  }
+
+  .article-layout {
+    display: block;
   }
 
   .article-shell {

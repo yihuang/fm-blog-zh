@@ -1,60 +1,167 @@
 ---
 layout: default
 ---
-<div class="article-shell">
-  <article class="article-card post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-    <header class="post-header">
-      <p class="kicker">{{ page.categories | join: ' · ' | default: '文章' }}</p>
-      <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
-      {%- if page.subtitle -%}
-      <p class="post-subtitle">{{ page.subtitle }}</p>
-      {%- endif -%}
-      <div class="post-meta">
-        <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: '%Y 年 %-m 月 %-d 日' }}</time>
-        {%- if page.reading_time -%}
-        <span class="dot" aria-hidden="true">·</span>
-        <span>约 {{ page.reading_time }} 分钟</span>
-        {%- endif -%}
-        {%- if page.figure_count -%}
-        <span class="dot" aria-hidden="true">·</span>
-        <span>{{ page.figure_count }} 张图</span>
-        {%- endif -%}
-      </div>
-    </header>
+{%- if page.toc -%}
+<script>
+  (function () {
+    var mq = window.matchMedia('(min-width: 1220px)');
+    function sync() {
+      document.documentElement.classList.toggle('toc-desktop', mq.matches);
+    }
+    sync();
+    if (mq.addEventListener) {
+      mq.addEventListener('change', sync);
+    } else if (mq.addListener) {
+      mq.addListener(sync);
+    }
+  })();
+</script>
+{%- endif -%}
 
-    <div class="post-content e-content" itemprop="articleBody">
-      {{ content }}
+<div class="article-shell">
+  <div class="article-layout">
+    <div class="article-column">
+      <article class="article-card post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+          <p class="kicker">{{ page.categories | join: ' · ' | default: '文章' }}</p>
+          <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
+          {%- if page.subtitle -%}
+          <p class="post-subtitle">{{ page.subtitle }}</p>
+          {%- endif -%}
+          <div class="post-meta">
+            <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: '%Y 年 %-m 月 %-d 日' }}</time>
+            {%- if page.reading_time -%}
+            <span class="dot" aria-hidden="true">·</span>
+            <span>约 {{ page.reading_time }} 分钟</span>
+            {%- endif -%}
+            {%- if page.figure_count -%}
+            <span class="dot" aria-hidden="true">·</span>
+            <span>{{ page.figure_count }} 张图</span>
+            {%- endif -%}
+          </div>
+        </header>
+
+        <div class="post-content e-content" itemprop="articleBody">
+          {{ content }}
+        </div>
+
+        <div class="endmark" aria-hidden="true">— 完 —</div>
+
+        <footer class="post-footer">
+          {%- if page.tags and page.tags.size > 0 -%}
+          <div class="post-footer-tags">
+            <span class="post-footer-label">标签</span>
+            {%- for tag in page.tags -%}
+            <a class="tag" href="{{ '/tags/' | relative_url }}#{{ tag | replace: ' ', '-' }}">{{ tag }}</a>
+            {%- endfor -%}
+          </div>
+          {%- endif -%}
+          <a class="back-home" href="{{ '/' | relative_url }}"><span aria-hidden="true">←</span> 返回首页</a>
+        </footer>
+      </article>
+
+      {%- if page.previous or page.next -%}
+      <nav class="post-pager" aria-label="文章导航">
+        {%- if page.previous -%}
+        <a class="pager-link" href="{{ page.previous.url | relative_url }}">
+          <span class="pager-label">上一篇</span>
+          <span class="pager-title">{{ page.previous.title }}</span>
+        </a>
+        {%- endif -%}
+        {%- if page.next -%}
+        <a class="pager-link pager-link--next" href="{{ page.next.url | relative_url }}">
+          <span class="pager-label">下一篇</span>
+          <span class="pager-title">{{ page.next.title }}</span>
+        </a>
+        {%- endif -%}
+      </nav>
+      {%- endif -%}
     </div>
 
-    <div class="endmark" aria-hidden="true">— 完 —</div>
-
-    <footer class="post-footer">
-      {%- if page.tags and page.tags.size > 0 -%}
-      <div class="post-footer-tags">
-        <span class="post-footer-label">标签</span>
-        {%- for tag in page.tags -%}
-        <a class="tag" href="{{ '/tags/' | relative_url }}#{{ tag | replace: ' ', '-' }}">{{ tag }}</a>
-        {%- endfor -%}
-      </div>
-      {%- endif -%}
-      <a class="back-home" href="{{ '/' | relative_url }}"><span aria-hidden="true">←</span> 返回首页</a>
-    </footer>
-  </article>
-
-  {%- if page.previous or page.next -%}
-  <nav class="post-pager" aria-label="文章导航">
-    {%- if page.previous -%}
-    <a class="pager-link" href="{{ page.previous.url | relative_url }}">
-      <span class="pager-label">上一篇</span>
-      <span class="pager-title">{{ page.previous.title }}</span>
-    </a>
+    {%- if page.toc -%}
+    <aside class="toc-rail" aria-label="本文目录" hidden>
+      <p class="toc-rail-title">本文目录</p>
+      <div class="toc-rail-body"></div>
+      <a class="toc-rail-top" href="#top">回到顶部 <span aria-hidden="true">↑</span></a>
+    </aside>
     {%- endif -%}
-    {%- if page.next -%}
-    <a class="pager-link pager-link--next" href="{{ page.next.url | relative_url }}">
-      <span class="pager-label">下一篇</span>
-      <span class="pager-title">{{ page.next.title }}</span>
-    </a>
-    {%- endif -%}
-  </nav>
-  {%- endif -%}
+  </div>
 </div>
+
+{%- if page.toc -%}
+<script>
+  (function () {
+    var details = document.querySelector('.post-content details.toc');
+    var rail = document.querySelector('.toc-rail');
+    if (!details || !rail) {
+      document.documentElement.classList.remove('toc-desktop');
+      return;
+    }
+
+    var list = details.querySelector('#markdown-toc');
+    if (!list || !list.children.length) {
+      document.documentElement.classList.remove('toc-desktop');
+      return;
+    }
+
+    var clone = list.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.querySelectorAll('[id]').forEach(function (el) {
+      el.removeAttribute('id');
+    });
+    rail.querySelector('.toc-rail-body').appendChild(clone);
+    rail.hidden = false;
+    document.documentElement.classList.add('has-toc-rail');
+
+    var links = Array.prototype.slice.call(
+      rail.querySelectorAll('.toc-rail-body a')
+    );
+    var pairs = links.map(function (link) {
+      return {
+        link: link,
+        heading: document.getElementById(link.getAttribute('href').slice(1))
+      };
+    }).filter(function (pair) {
+      return pair.heading;
+    });
+    if (!pairs.length) return;
+
+    var ticking = false;
+    function updateActive() {
+      var marker = window.scrollY + 120;
+      var current = null;
+      for (var i = 0; i < pairs.length; i++) {
+        var top = pairs[i].heading.getBoundingClientRect().top + window.scrollY;
+        if (top <= marker) {
+          current = pairs[i];
+        } else {
+          break;
+        }
+      }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+        current = pairs[pairs.length - 1];
+      }
+      links.forEach(function (link) {
+        var active = current && link === current.link;
+        link.classList.toggle('is-active', active);
+        if (active) {
+          link.setAttribute('aria-current', 'location');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+      ticking = false;
+    }
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateActive);
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    window.addEventListener('load', updateActive);
+    updateActive();
+  })();
+</script>
+{%- endif -%}

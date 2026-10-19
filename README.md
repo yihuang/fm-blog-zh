@@ -36,6 +36,7 @@ tags:
   - 不动点
 reading_time: 20
 figure_count: 9
+toc: true
 cover: /images/example-card.png
 image: /images/example.png
 ---
@@ -54,7 +55,7 @@ image: /images/example.png
 首页的文章卡片会自动读取 `title`、`subtitle`、`description`、`tags`、`reading_time` 和 `cover`。
 `cover` 是卡片缩略图，`image` 用于社交分享（Open Graph）。
 
-文章目录使用 Kramdown 内置的 `{:toc}` 生成，并在正文中包一层可折叠的 `<details>`：
+在 front matter 中设置 `toc: true` 后，文章目录使用 Kramdown 内置的 `{:toc}` 生成，并在正文中包一层可折叠的 `<details>`：
 
 ```markdown
 <details class="toc" open markdown="1">
@@ -67,6 +68,7 @@ image: /images/example.png
 ```
 
 目录默认包含 `h2` 标题，级别由 `_config.yml` 中的 `toc_levels` 控制。
+桌面端（≥ 1220px）会把这份目录克隆成右侧浮动栏，并随滚动高亮当前章节；窗口较窄或没有启用 `toc: true` 时保留正文里的折叠目录（无 JS 时也会回退到它）。
 
 ## 目录结构
 
