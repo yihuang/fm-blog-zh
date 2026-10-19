@@ -145,8 +145,8 @@ doc = f"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>永远不报错的 Bug</title>
-<meta name="description" content="写给软件工程师的 liveness 与不动点科普：从永远不报错的 Bug，到无限轨迹、套索与公平性。">
+<title>liveness 和不动点</title>
+<meta name="description" content="写给软件工程师的 liveness 与不动点科普：从永远完不成的任务，到无限轨迹、套索、公平性与最小/最大不动点。">
 <style>{css}</style>
 </head>
 <body>
