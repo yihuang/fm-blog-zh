@@ -27,6 +27,7 @@ kramdown:
   input: GFM
   hard_wrap: false
   auto_ids: true
+  toc_levels: 2..2
   # GitHub Pages enables Rouge; the stylesheet normalises its markup into the
   # site's plain dark code block so local and production output match.
   syntax_highlighter: rouge

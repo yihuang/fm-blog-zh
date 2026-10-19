@@ -20,6 +20,14 @@ image: /images/00-cover.png
 > 写给不熟悉形式化验证的软件工程师。\
 > 不需要预备知识。
 
+<details class="toc" open markdown="1">
+<summary>本文目录</summary>
+
+* TOC
+{:toc}
+
+</details>
+
 先看一个很小、但很典型的并发故障。
 
 两个线程，T1 和 T2，抢同一把 test-and-set 自旋锁。调度器总是先运行 T1；T1 释放锁之后，又立刻把锁抢了回来。T2 一直在 `while (!acquired) yield();` 里打转。日志里没有异常，CPU 占用正常，T1 的活干得很好。唯一的症状是：T2 负责的那部分任务，永远不会开始。

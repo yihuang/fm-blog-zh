@@ -54,6 +54,20 @@ image: /images/example.png
 首页的文章卡片会自动读取 `title`、`subtitle`、`description`、`tags`、`reading_time` 和 `cover`。
 `cover` 是卡片缩略图，`image` 用于社交分享（Open Graph）。
 
+文章目录使用 Kramdown 内置的 `{:toc}` 生成，并在正文中包一层可折叠的 `<details>`：
+
+```markdown
+<details class="toc" open markdown="1">
+<summary>本文目录</summary>
+
+* TOC
+{:toc}
+
+</details>
+```
+
+目录默认包含 `h2` 标题，级别由 `_config.yml` 中的 `toc_levels` 控制。
+
 ## 目录结构
 
 ```text
