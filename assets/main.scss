@@ -631,31 +631,7 @@ img {
   width: 100%;
   max-width: 914px;
   margin: 0 auto;
-  padding: 36px 32px 88px;
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 auto 18px;
-  max-width: 850px;
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: .08em;
-}
-
-.breadcrumb a {
-  color: var(--muted);
-  border: 0;
-}
-
-.breadcrumb a:hover {
-  color: var(--red);
-}
-
-.breadcrumb-sep {
-  color: #C9BDAB;
+  padding: 48px 32px 88px;
 }
 
 .article-card {
@@ -1157,12 +1133,7 @@ img {
   }
 
   .article-shell {
-    padding: 14px 0 0;
-  }
-
-  .breadcrumb {
-    margin-bottom: 12px;
-    padding: 0 22px;
+    padding: 24px 0 0;
   }
 
   .article-card {
@@ -1307,7 +1278,6 @@ img {
 
   .site-header,
   .site-footer,
-  .breadcrumb,
   .post-footer,
   .post-pager,
   .endmark,

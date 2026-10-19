@@ -2,12 +2,6 @@
 layout: default
 ---
 <div class="article-shell">
-  <nav class="breadcrumb" aria-label="面包屑">
-    <a href="{{ '/' | relative_url }}">首页</a>
-    <span class="breadcrumb-sep" aria-hidden="true">/</span>
-    <span>{{ page.categories | first | default: '文章' }}</span>
-  </nav>
-
   <article class="article-card post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
     <header class="post-header">
       <p class="kicker">{{ page.categories | join: ' · ' | default: '文章' }}</p>
