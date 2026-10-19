@@ -302,13 +302,12 @@ id="四反例的形状一个绕不出去的环">四、反例的形状：一个�
 表示“把括号里的东西无限重复”。这就是<strong>套索（lasso）</strong>：一段有限的前缀，加一个无限循环的环。它是“无限”在有限世界里的可打印形式。</p>
 <p>一个 liveness
 反例，就是一个<strong>可达的坏环</strong>：从初始状态能走到这个环，而环里永远不会发生那件好事。</p>
-<p>把开头的锁例子画成状态图，就是图 3：C1 是“T1 在临界区、T2 在
-try”，Init 是“锁空闲、两个线程都在 try”，C2 是“T2 在临界区、T1 在
-try”。</p>
-<p>Init→C1 是 T1 抢到，C1→Init 是 T1 释放；C1 上还有一个 T2 spin
-的自环。Init→C2 是 T2 抢到，C2→Init 是 T2 释放；C2 上还有一个 T1 spin
-的自环。Init↔︎C1 组成一个环，Init→C2
-是环的出口——但这条执行永远不选它。</p>
+<p>把开头的锁例子画成状态图，就是图 3：</p>
+<figure>
+<img src="images/03-lasso.png" alt="锁状态图上的坏环" />
+<figcaption aria-hidden="true">锁状态图上的坏环</figcaption>
+</figure>
+<p class="caption"><em>图 3：Init↔︎C1 是坏环，Init→C2 是没走的出口。</em></p>
 <p>所以这条执行就是
 <code>(Init C1)^ω</code>：Init→C1→Init→C1……永远到不了
 C2。这个例子里，起点 Init 本身就在环上，所以前缀是空的。</p>
@@ -318,13 +317,6 @@ bug：它不需要模拟无限步，只需要找一个从初始状态可达、�
 SCC，再在里面找环。</p>
 <p>找环，就是找反例。</p>
 <p>注意这个环的一个性质：从环里任意一点出发，下一步还在环里。也就是说，环对转移是封闭的。封闭的集合，正是“不动点”要捕捉的东西——你把它往前推一步，它还是它自己。</p>
-<figure>
-<img src="images/03-lasso.png" alt="锁状态图上的坏环" />
-<figcaption aria-hidden="true">锁状态图上的坏环</figcaption>
-</figure>
-<p class="caption"><em>图 3：把开头的锁例子画成状态图。Init→C1 是 T1 抢到，C1→Init 是 T1
-释放；Init→C2 是 T2 抢到，但这条执行永远不选它。于是 Init 和 C1 转成
-<code>(Init C1)^ω</code>，永远到不了 C2。</em></p>
 <h2 id="五把永远写成方程">五、把“永远”写成方程</h2>
 <p>先忘掉
 liveness，看一个更简单的问题：从起点出发，哪些状态是可达的？</p>
@@ -548,8 +540,12 @@ C2；AG ¬C2 要求所有路都避开 C2，Init→C2 这条路让它不成立。
 则把路径量词和时序操作符自由组合。本文用到哪一副眼镜，就在哪一段说清楚。</p>
 <h2 id="七点亮从目标倒着长">七、点亮：从目标倒着长</h2>
 <p>现在回到最初的问题：怎样证明“所有路径最终都会到达目标”？把开头的锁例子画成状态图（图
-5）：C1 是“T1 在临界区、T2 在 try”，Init 是“锁空闲、两个线程都在
-try”，C2 是“T2 在临界区、T1 在 try”。目标就是 C2。</p>
+5），目标就是 C2。</p>
+<figure>
+<img src="images/05-peeling.png" alt="同一张锁状态图上的点亮" />
+<figcaption aria-hidden="true">同一张锁状态图上的点亮</figcaption>
+</figure>
+<p class="caption"><em>图 5：只有 C2 被点亮；Init、C1 留在坏环里。</em></p>
 <p>有一个非常朴素的算法。先把 Goal
 点亮；然后看哪些状态，它们的每一个后继都已经被点亮——这些状态也点亮；重复这个过程，直到没有新的状态被点亮。</p>
 <p>用伪代码写：</p>
@@ -589,12 +585,6 @@ Büchi 自动机、SCC 算法，做的就是这件事。</p>
 <p><strong>深水区</strong>：完整的线性时序逻辑（LTL）模型检查复杂度很高（PSPACE
 完全）：公式要先变成自动机，规模可能指数爆炸；但落到图上的核心动作，仍然是迭代、取前驱、找环。</p>
 </blockquote>
-<figure>
-<img src="images/05-peeling.png" alt="同一张锁状态图上的点亮" />
-<figcaption aria-hidden="true">同一张锁状态图上的点亮</figcaption>
-</figure>
-<p class="caption"><em>图 5：同一张锁状态图。只有 C2 被点亮；Init、C1
-可以一直在彼此之间打转，永远到不了 C2，所以点不亮。</em></p>
 <h2 id="八公平性liveness-的隐形前提">八、公平性：liveness
 的隐形前提</h2>
 <p>现在你可能会觉得：只要把状态图写出来，点亮算法一跑，liveness
