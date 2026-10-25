@@ -93,6 +93,7 @@ GitHub Pages 会直接从 `main` 分支的根目录构建这个 Jekyll 站点，
 
 ## 插图
 
-`python3 figures/build.py` 会重新生成 `images/` 下的 SVG/PNG 插图（需要 ImageMagick）。
+`python3 figures/build.py` 会重新生成 liveness 文章的 SVG/PNG 插图（需要 ImageMagick）；
+`python3 figures/topology.py` 生成拓扑学文章的插图。
 首页卡片使用的 `images/00-cover-card.png` 是从 `images/00-cover.png` 裁出的缩略图；
 如果重做封面，请同步更新这张裁图。
