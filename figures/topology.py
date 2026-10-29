@@ -288,6 +288,112 @@ def fig_tree():
 
 
 # ------------------------------------------------------------------ figure 2
+def fig_lattice():
+    h = 540
+    s = SVG(W, h)
+    kicker(s, "图 3 / THE LATTICE OF OPENS")
+    title(s, "开集的格：真值不止两个",
+          "同一个空间的开集按包含排成格；否定是否等于补集，决定了逻辑是不是布尔的")
+
+    panel(s, 40, 140, 390, 320)
+    s.text(64, 172, "Sierpiński 空间", size=16, fill=GREEN, weight="700")
+    s.text(64, 194, "开集：∅、{1}、{0,1}", size=12.5, fill=MUTED)
+
+    cx = 200
+    ys = [240, 330, 420]
+    labels = ["X", "P", "∅"]
+    for i, (y, lab) in enumerate(zip(ys, labels)):
+        if i < 2:
+            s.line((cx, y + 30), (cx, ys[i + 1] - 30), color=INK, sw=2)
+        s.circle(cx, y, 29, fill=PAPER, stroke=INK, sw=2)
+        s.text(cx, y + 5, lab, size=14, fill=INK, anchor="middle", family=MONO, weight="600")
+    s.text(cx + 46, 246, "= {0,1}", size=12, fill=MUTED, family=MONO)
+    s.text(cx + 46, 336, "= {1}", size=12, fill=MUTED, family=MONO)
+
+
+
+    panel(s, 470, 140, 390, 320)
+    s.text(494, 172, "两点离散空间", size=16, fill=BLUE, weight="700")
+    s.text(494, 194, "开集：∅、{a}、{b}、{a,b}", size=12.5, fill=MUTED)
+
+    top = (665, 240)
+    left = (590, 335)
+    right = (740, 335)
+    bot = (665, 420)
+    def link(a, b):
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        L = (dx * dx + dy * dy) ** 0.5
+        ux, uy = dx / L, dy / L
+        s.line((a[0] + ux * 29, a[1] + uy * 29),
+               (b[0] - ux * 29, b[1] - uy * 29), color=INK, sw=2)
+    link(bot, left); link(bot, right); link(left, top); link(right, top)
+    for (x, y), lab in [((665, 240), "X"), ((590, 335), "{a}"),
+                        ((740, 335), "{b}"), ((665, 420), "∅")]:
+        s.circle(x, y, 29, fill=PAPER, stroke=INK, sw=2)
+        s.text(x, y + 5, lab, size=13, fill=INK, anchor="middle", family=MONO, weight="600")
+
+
+
+    s.text(40, 502, "左边不是布尔代数：P 既不是 ⊥ 也不是 ⊤，¬P = ⊥，¬¬P = ⊤。", size=13.5, fill=INK)
+    s.text(40, 526, "右边是：每个元素都有补集。开集的逻辑一般更接近左边 —— 边界就是那个“说不清”的中间值。",
+           size=13.5, fill=MUTED)
+    s.save("topo-02-frame")
+
+
+# ------------------------------------------------------------------ figure 3
+def fig_system():
+    h = 580
+    s = SVG(W, h)
+    kicker(s, "图 4 / TOPOLOGICAL SYSTEMS")
+    title(s, "拓扑系统：理论、模型、外延",
+          "一个点，就是对所有观察的一个尊重逻辑的真值分配")
+
+    # matrix
+    x0, y0, cw, ch = 110, 230, 90, 58
+    cols = ["U", "V", "W"]
+    rows = ["x₁", "x₂", "x₃"]
+    marks = [[1, 1, 0], [1, 0, 1], [0, 0, 1]]
+    for j, c in enumerate(cols):
+        s.text(x0 + j * cw + cw / 2, y0 - 18, c, size=16, fill=INK,
+               anchor="middle", family=MONO, weight="600")
+    for i, r in enumerate(rows):
+        s.text(x0 - 22, y0 + i * ch + ch / 2 + 5, r, size=16, fill=INK,
+               anchor="end", family=MONO, weight="600")
+        for j in range(3):
+            cx = x0 + j * cw + cw / 2
+            cy = y0 + i * ch + ch / 2
+            s.rect(x0 + j * cw, y0 + i * ch, cw, ch, fill=PANEL, stroke=LINE, sw=1)
+            if marks[i][j]:
+                s.circle(cx, cy, 7, fill=GREEN, stroke=GREEN)
+            else:
+                s.circle(cx, cy, 7, fill=PAPER, stroke=MUTED, sw=1.2)
+    s.text(110, 452, "x ⊩ U：每一行是一个模型（点），每一列是一个观察（开集）。",
+           size=12.5, fill=MUTED)
+    s.text(110, 476, "第三行只满足 W：这个点区分开了 W 与 U、V。", size=12.5, fill=MUTED)
+
+    # duality diagram
+    s.rect(560, 180, 260, 66, rx=10, fill=PANEL, stroke=INK, sw=1.6)
+    s.text(690, 206, "frame Ω", size=17, fill=INK, anchor="middle", weight="700",
+           family=MONO)
+    s.text(690, 230, "观察 / 理论", size=12.5, fill=MUTED, anchor="middle")
+
+    s.rect(560, 360, 260, 66, rx=10, fill=PANEL, stroke=INK, sw=1.6)
+    s.text(690, 386, "点集 pt(Ω)", size=17, fill=INK, anchor="middle", weight="700",
+           family=MONO)
+    s.text(690, 410, "模型 / 实现", size=12.5, fill=MUTED, anchor="middle")
+
+    s.arrow((620, 252), (620, 352), color=GREEN, sw=2)
+    s.text(608, 306, "ext", size=13, fill=GREEN, anchor="end", family=MONO)
+
+    s.text(690, 470, "ext(U) = {x : x ⊩ U}，点 = frame hom Ω → 2", size=11.5,
+           fill=MUTED, anchor="middle")
+
+    s.text(40, 540, "连续映射 f : X → Y 对应 frame hom f* : ΩY → ΩX —— 逻辑的方向和点的方向相反。",
+           size=13, fill=MUTED)
+    s.save("topo-03-system")
+
+
+# ------------------------------------------------------------------ figure 4
 def fig_interior():
     h = 560
     s = SVG(W, h)
@@ -333,7 +439,7 @@ def fig_interior():
 def fig_continuous():
     h = 580
     s = SVG(W, h)
-    kicker(s, "图 3 / CONTINUITY")
+    kicker(s, "图 5 / CONTINUITY")
     title(s, "连续：输出的每个观察，都能用输入的有限观察回答",
           "f 连续，当且仅当每个开集 U 的原像也是开集")
 
@@ -377,7 +483,7 @@ def fig_continuous():
 def fig_zoo():
     h = 640
     s = SVG(W, h)
-    kicker(s, "图 4 / HOMEOMORPHISM & INVARIANTS")
+    kicker(s, "图 6 / HOMEOMORPHISM & INVARIANTS")
     title(s, "形状动物园：哪些不一样，凭什么说不一样",
           "同胚 = 双向连续的双射；不变量 = 被同胚保持的性质")
 
@@ -429,7 +535,7 @@ def fig_zoo():
 def fig_compact():
     h = 620
     s = SVG(W, h)
-    kicker(s, "图 5 / COMPACTNESS")
+    kicker(s, "图 7 / COMPACTNESS")
     title(s, "紧致：任何开覆盖，都能抽出有限个",
           "局部信息足够多时，紧致性保证只用有限多条就能覆盖全局")
 
@@ -477,7 +583,7 @@ def fig_compact():
 def fig_connected():
     h = 700
     s = SVG(W, h)
-    kicker(s, "图 6 / CONNECTEDNESS")
+    kicker(s, "图 8 / CONNECTEDNESS")
     title(s, "连通：不能被切成两个非空开集",
           "连续映射把连通集映成连通集 —— 中间值定理就是这句话")
 
@@ -550,7 +656,7 @@ def fig_connected():
 def fig_quotient():
     h = 590
     s = SVG(W, h)
-    kicker(s, "图 7 / QUOTIENT SPACES")
+    kicker(s, "图 9 / QUOTIENT SPACES")
     title(s, "商空间：把点粘起来，拓扑也跟着粘",
           "粘合就是商类型：先声明哪些点等价，再看哪些函数还连续")
 
@@ -635,7 +741,7 @@ def fig_quotient():
 def fig_homotopy():
     h = 630
     s = SVG(W, h)
-    kicker(s, "图 8 / HOMOTOPY & FUNDAMENTAL GROUP")
+    kicker(s, "图 10 / HOMOTOPY & FUNDAMENTAL GROUP")
     title(s, "同伦：允许形变之后，剩下的才是“形状”",
           "绕不过去的洞，被基本群记成一个整数")
 
@@ -679,8 +785,9 @@ def cover():
     s.text(60, 160, "拓扑学", size=62, fill=INK, weight="700")
     s.text(60, 232, "形状的逻辑", size=44, fill=INK, weight="700")
     s.line((60, 258), (300, 258), color=GREEN, sw=3)
-    s.text(60, 300, "开集是可确认的性质", size=18, fill=MUTED)
-    s.text(60, 330, "连续是有限信息，紧致是有限次观察", size=18, fill=MUTED)
+    s.text(60, 292, "开集是可确认的性质", size=17, fill=MUTED)
+    s.text(60, 320, "空间是一套理论，点是它的模型", size=17, fill=MUTED)
+    s.text(60, 348, "连续是理论的翻译", size=17, fill=MUTED)
     s.text(60, 436, "关键定义都有 Lean 4 版本", size=13, fill=MUTED)
     s.text(60, 462, "不需要任何前置知识", size=12.5, fill=MUTED)
 
@@ -700,6 +807,7 @@ def card_cover():
 
 
 if __name__ == "__main__":
-    fig_tree(); fig_interior(); fig_continuous(); fig_zoo()
+    fig_tree(); fig_lattice(); fig_system()
+    fig_interior(); fig_continuous(); fig_zoo()
     fig_compact(); fig_connected(); fig_quotient(); fig_homotopy()
     cover(); card_cover()
