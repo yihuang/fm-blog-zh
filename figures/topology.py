@@ -289,54 +289,61 @@ def fig_tree():
 
 # ------------------------------------------------------------------ figure 2
 def fig_lattice():
-    h = 540
+    h = 600
     s = SVG(W, h)
     kicker(s, "图 3 / THE LATTICE OF OPENS")
-    title(s, "开集的格：真值不止两个",
-          "同一个空间的开集按包含排成格；否定是否等于补集，决定了逻辑是不是布尔的")
+    title(s, "开集是幂集里的哪些元素",
+          "同样四个子集，拓扑不同，亮着的节点就不同；灰掉的是不可确认的性质")
 
-    panel(s, 40, 140, 390, 320)
-    s.text(64, 172, "Sierpiński 空间", size=16, fill=GREEN, weight="700")
-    s.text(64, 194, "开集：∅、{1}、{0,1}", size=12.5, fill=MUTED)
+    def draw_panel(x0, name, sub, labels, open_labels, note, note_color):
+        panel(s, x0, 140, 390, 380)
+        s.text(x0 + 24, 172, name, size=16, fill=GREEN, weight="700")
+        s.text(x0 + 24, 194, sub, size=12.5, fill=MUTED)
+        cx = x0 + 195
+        top, left, right, bot = (cx, 250), (cx - 88, 340), (cx + 88, 340), (cx, 430)
 
-    cx = 200
-    ys = [240, 330, 420]
-    labels = ["X", "P", "∅"]
-    for i, (y, lab) in enumerate(zip(ys, labels)):
-        if i < 2:
-            s.line((cx, y + 30), (cx, ys[i + 1] - 30), color=INK, sw=2)
-        s.circle(cx, y, 29, fill=PAPER, stroke=INK, sw=2)
-        s.text(cx, y + 5, lab, size=14, fill=INK, anchor="middle", family=MONO, weight="600")
-    s.text(cx + 46, 246, "= {0,1}", size=12, fill=MUTED, family=MONO)
-    s.text(cx + 46, 336, "= {1}", size=12, fill=MUTED, family=MONO)
+        def is_open(lab):
+            return lab in open_labels
 
+        def edge(a, b):
+            both = is_open(a[2]) and is_open(b[2])
+            dx, dy = b[0] - a[0], b[1] - a[1]
+            L = (dx * dx + dy * dy) ** 0.5
+            ux, uy = dx / L, dy / L
+            s.line((a[0] + ux * 22, a[1] + uy * 22),
+                   (b[0] - ux * 22, b[1] - uy * 22),
+                   color=GREEN if both else LINE, sw=2 if both else 1.4,
+                   dash=None if both else "4 5")
 
+        nodes = [(*top, labels[0]), (*left, labels[1]),
+                 (*right, labels[2]), (*bot, labels[3])]
+        edge(nodes[0], nodes[1]); edge(nodes[0], nodes[2])
+        edge(nodes[1], nodes[3]); edge(nodes[2], nodes[3])
 
-    panel(s, 470, 140, 390, 320)
-    s.text(494, 172, "两点离散空间", size=16, fill=BLUE, weight="700")
-    s.text(494, 194, "开集：∅、{a}、{b}、{a,b}", size=12.5, fill=MUTED)
+        for x, y, lab in nodes:
+            op = is_open(lab)
+            s.rect(x - 34, y - 16, 68, 32, rx=8,
+                   fill="#E8F0EC" if op else PAPER,
+                   stroke=GREEN if op else LINE, sw=1.8 if op else 1.4,
+                   dash=None if op else "4 5")
+            s.text(x, y + 4.5, lab, size=12, fill=GREEN if op else MUTED,
+                   anchor="middle", family=MONO, weight="600")
 
-    top = (665, 240)
-    left = (590, 335)
-    right = (740, 335)
-    bot = (665, 420)
-    def link(a, b):
-        dx, dy = b[0] - a[0], b[1] - a[1]
-        L = (dx * dx + dy * dy) ** 0.5
-        ux, uy = dx / L, dy / L
-        s.line((a[0] + ux * 29, a[1] + uy * 29),
-               (b[0] - ux * 29, b[1] - uy * 29), color=INK, sw=2)
-    link(bot, left); link(bot, right); link(left, top); link(right, top)
-    for (x, y), lab in [((665, 240), "X"), ((590, 335), "{a}"),
-                        ((740, 335), "{b}"), ((665, 420), "∅")]:
-        s.circle(x, y, 29, fill=PAPER, stroke=INK, sw=2)
-        s.text(x, y + 5, lab, size=13, fill=INK, anchor="middle", family=MONO, weight="600")
+        s.text(x0 + 24, 480, note, size=11.8, fill=note_color)
 
+    draw_panel(40, "Sierpiński 空间", "点：0、1；开集：∅、{1}、{0,1}",
+               ["{0,1}", "{0}", "{1}", "∅"],
+               ["{0,1}", "{1}", "∅"],
+               "¬{1} = ∅，¬¬{1} = {0,1}", RED)
+    draw_panel(470, "两点离散空间", "点：a、b；开集：全部四个子集",
+               ["{a,b}", "{a}", "{b}", "∅"],
+               ["{a,b}", "{a}", "{b}", "∅"],
+               "¬{a} = {b}，排中律成立", GREEN)
 
-
-    s.text(40, 502, "左边不是布尔代数：P 既不是 ⊥ 也不是 ⊤，¬P = ⊥，¬¬P = ⊤。", size=13.5, fill=INK)
-    s.text(40, 526, "右边是：每个元素都有补集。开集的逻辑一般更接近左边 —— 边界就是那个“说不清”的中间值。",
-           size=13.5, fill=MUTED)
+    s.text(40, 550, "左边不是布尔代数：{1} ∪ ¬{1} = {1}，少了 {0}。右边是：每个元素都有补集。",
+           size=13.2, fill=INK)
+    s.text(40, 576, "同一个四点格，左边只亮了三个节点，连成一条链；右边四个全亮，连成菱形。",
+           size=13.2, fill=MUTED)
     s.save("topo-02-frame")
 
 
