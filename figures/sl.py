@@ -379,6 +379,51 @@ def fig_stack():
     s.save("sl-08-iris-lean")
 
 
+# ------------------------------------------------------------------ 09
+def fig_pipeline():
+    s = SVG(W, 560)
+    kicker(s, "09 · 从代码到定理")
+    title(s, "怎么把一段代码变成一条定理", "六步；卡住的地方通常在第三步或第四步")
+
+    steps = [
+        ("缩成核心", "去掉 I/O、错误处理、日志，只留共享状态与同步原语"),
+        ("列出共享状态", "每一项写清楚：谁拥有它，什么时候转移"),
+        ("写不变式", "每个锁、每个共享结构一条；写不出来，就是还没想清楚"),
+        ("找幽灵状态", "计数、版本号、协议阶段——那些不在内存里的资源"),
+        ("写原子规格", "is_xxx 抽象谓词把内部藏起来，外面只露三元组"),
+        ("证", "先证顺序部分，再证并发；剩下的是体力活"),
+    ]
+    y = 168
+    for i, (name, note) in enumerate(steps, 1):
+        s.circle(80, y, 17, fill=PANEL, stroke=BLUE, sw=1.6)
+        s.text(80, y + 5, str(i), size=12, fill=BLUE_DARK, anchor="middle",
+               weight="700", family=MONO)
+        s.text(112, y + 1, name, size=13.5, fill=INK, weight="700")
+        s.text(112, y + 24, note, size=11.5, fill=MUTED)
+        if i < len(steps):
+            s.line((80, y + 19), (80, y + 39), color=LINE, sw=1.6)
+        y += 52
+
+    panel(s, 560, 146, 300, 306)
+    s.text(578, 174, "常见的三个卡点", size=12, fill=MUTED, weight="600", spacing=1.4)
+    blocks = [
+        ("不变式写不出来", "你还没想清楚谁拥有什么。", RED),
+        ("幽灵状态对不上", "协议里有一个「数」没被建模。", AMBER),
+        ("证到一半卡住", "先退回去证顺序版本，再拆并发。", BLUE),
+    ]
+    for i, (h, note, col) in enumerate(blocks):
+        yy = 196 + i * 82
+        s.text(578, yy, h, size=12, fill=col, weight="700")
+        s.text(578, yy + 22, note, size=11, fill=INK)
+
+    s.rect(40, 480, 820, 56, rx=14, fill="#F6F1E7", stroke="#E4D9C6", sw=1.2)
+    s.text(60, 505, "流水线的产物不是代码，是一条定理：它能被审查、被复用、被推翻。", size=13,
+           fill=INK)
+    s.text(60, 527, "「这段代码是安全的」于是变成一条有前提、有后置条件、可以被别人检查的命题。", size=13,
+           fill=INK)
+    s.save("sl-09-pipeline")
+
+
 # ------------------------------------------------------------------ cover
 def cover():
     s = SVG(W, 500)
@@ -419,5 +464,5 @@ def cover():
 if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     for fn in (fig_split, fig_small, fig_locality, fig_parallel, fig_ghost,
-               fig_invariant, fig_wp, fig_stack, cover):
+               fig_invariant, fig_wp, fig_stack, fig_pipeline, cover):
         fn()
